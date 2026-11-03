@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14213d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blitzrechnen">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>:root{padding-top:env(safe-area-inset-top,0px)}</style>
+<title>Blitzrechnen</title>
+<meta name="description" content="Mental math trainer against the clock: arithmetic, functions, calculus and linear algebra, plus a function-drawing coin game.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Unbounded:wght@600;800&display=swap">
+<style>
+/* Layout: one centered column on graph paper — menu → round → results, statistics as its own view */
+:root{
+  --bg:#f2f4f7; --grid:rgba(36,64,130,.075); --surface:#ffffff; --ink:#14213d; --muted:#5a6680; --line:#d6dce7;
+  --accent:#ffb000; --accent-ink:#241900; --plot:#2d5bd7; --ok:#1d8a58; --bad:#c6372c;
+  --ok-soft:rgba(29,138,88,.12); --bad-soft:rgba(198,55,44,.10); --hover:rgba(20,33,61,.04);
+  --cv1:#2d5bd7; --cv2:#c2338a; --cv3:#0e8a78; --cv4:#cf5d14; --cv5:#7546d1; --cv6:#4f5b75; --coin:#f2a900; --coin-edge:#8a5a00;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1320; --grid:rgba(140,170,255,.06); --surface:#161d2d; --ink:#e7ebf4; --muted:#9aa5bd; --line:#2a3349;
+  --accent:#ffc23d; --accent-ink:#241900; --plot:#7fa4ff; --ok:#3ccf8e; --bad:#ff6d60;
+  --ok-soft:rgba(60,207,142,.14); --bad-soft:rgba(255,109,96,.13); --hover:rgba(231,235,244,.05);
+  --cv1:#7fa4ff; --cv2:#ff7ac8; --cv3:#3fd1bd; --cv4:#ff9a52; --cv5:#b89dff; --cv6:#aab4c9; --coin:#ffc23d; --coin-edge:#ffe39a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1320; --grid:rgba(140,170,255,.06); --surface:#161d2d; --ink:#e7ebf4; --muted:#9aa5bd; --line:#2a3349;
+  --accent:#ffc23d; --accent-ink:#241900; --plot:#7fa4ff; --ok:#3ccf8e; --bad:#ff6d60;
+  --ok-soft:rgba(60,207,142,.14); --bad-soft:rgba(255,109,96,.13); --hover:rgba(231,235,244,.05);
+  --cv1:#7fa4ff; --cv2:#ff7ac8; --cv3:#3fd1bd; --cv4:#ff9a52; --cv5:#b89dff; --cv6:#aab4c9; --coin:#ffc23d; --coin-edge:#ffe39a; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;min-height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--plot);outline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding-block:20px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:22px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0}
+.brand svg{width:30px;height:30px;flex:none}
+.wordmark{font:800 clamp(19px,4.6vw,24px)/1 var(--f-display);letter-spacing:-.01em}
+.tools{display:flex;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 11px;border-radius:7px;font-size:14px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ghost{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 13px;font-size:14px;font-weight:600}
+.ghost:hover{background:var(--hover)}
+
+h1,h2{font-family:var(--f-display);font-weight:600;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(24px,6vw,36px);line-height:1.15}
+h2{font-size:18px}
+.lede{color:var(--muted);margin:6px 0 0;max-width:60ch}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* settings */
+.settings{display:flex;flex-wrap:wrap;gap:14px 22px}
+.setting{display:flex;flex-direction:column;gap:6px}
+
+/* discipline grid */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.disc{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:var(--surface);
+  border:1.5px solid var(--line);border-radius:12px;padding:14px;min-height:118px;transition:transform .12s,border-color .12s}
+.disc:hover{border-color:var(--ink);transform:translateY(-2px)}
+.sym{font:700 24px/1.1 var(--f-mono);height:34px;display:flex;align-items:center;color:var(--plot)}
+.sym svg{height:30px;width:auto}
+.dname{font-weight:600;line-height:1.25}
+.dmeta{font-size:13px;color:var(--muted);margin-top:auto;font-variant-numeric:tabular-nums}
+
+/* mix panel */
+.mix{background:var(--surface);border:1.5px solid var(--ink);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;
+  box-shadow:5px 5px 0 var(--accent)}
+.mixhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:500;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.cta{background:var(--accent);color:var(--accent-ink);border:1.5px solid var(--ink);border-radius:10px;padding:10px 18px;font-weight:700;
+  box-shadow:3px 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.cta:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.cta:disabled{opacity:.5;cursor:not-allowed}
+.small{font-size:13px;color:var(--muted)}
+.warn{color:var(--bad);font-size:14px}
+
+/* game */
+.hud{display:flex;align-items:center;gap:12px}
+.timer{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
+.bar{flex:1;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--accent);transform-origin:left;border-radius:99px}
+.bar.low i{background:var(--bad)}
+.secs{font:700 18px var(--f-mono);font-variant-numeric:tabular-nums;min-width:3.2ch;text-align:right}
+.score{font:700 18px var(--f-mono);display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:4px 10px}
+.score svg{width:14px;height:14px}
+.qcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:clamp(18px,4vw,30px);display:flex;flex-direction:column;gap:18px;
+  transition:border-color .15s,background-color .15s}
+.qcard.ok{border-color:var(--ok);background-color:var(--ok-soft)}
+.qcard.bad{border-color:var(--bad);background-color:var(--bad-soft)}
+.qtop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--plot)}
+.instr{color:var(--muted);font-size:15px;margin:0}
+.prompt{font:700 clamp(26px,7.5vw,50px)/1.2 var(--f-mono);letter-spacing:-.02em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.prompt .fx{color:var(--muted);font-weight:500}
+.prompt.one{white-space:nowrap;overflow-wrap:normal;overflow:hidden}
+.prompt sup{font-size:.6em;line-height:0}
+.answer{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font:500 clamp(20px,5vw,28px) var(--f-mono)}
+.slot{display:inline-flex;align-items:center;gap:8px}
+.in{font:700 clamp(22px,6vw,32px) var(--f-mono);width:5.2ch;text-align:center;border:0;border-bottom:3px solid var(--ink);background:transparent;color:var(--ink);
+  padding:2px 0;border-radius:0}
+.in:focus{outline:none;border-bottom-color:var(--accent);background:var(--hover)}
+.in.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%}
+.opt{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:6px 6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.opt:hover{border-color:var(--ink)}
+.opt svg{width:100%;height:auto;max-width:180px;display:block}
+.opt b{font:700 14px var(--f-mono);color:var(--muted)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.g-grid line{stroke:var(--line);stroke-width:.6}
+.g-axis line{stroke:var(--muted);stroke-width:1.1}
+.g-num{fill:var(--muted);font:600 7px var(--f-mono)}
+.g-curve{fill:none;stroke:var(--plot);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.fb{min-height:1.6em;font-weight:600}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.fb code{font-family:var(--f-mono)}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.actions .hint{margin-right:auto}
+.keypad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.keypad button{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 0;font:700 22px var(--f-mono);touch-action:manipulation}
+.keypad button:active{background:var(--hover)}
+.keypad .go{background:var(--accent);color:var(--accent-ink);border-color:var(--ink)}
+
+/* results & stats */
+.panel{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:clamp(18px,4vw,28px);display:flex;flex-direction:column;gap:18px}
+.big{font:800 clamp(56px,16vw,92px)/1 var(--f-display);letter-spacing:-.03em}
+.hero{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.badge{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:13px;border-radius:6px;padding:3px 8px;letter-spacing:.02em}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{border-top:2px solid var(--ink);padding-top:8px;display:flex;flex-direction:column;gap:2px}
+.kpi strong{font:700 22px var(--f-mono);font-variant-numeric:tabular-nums}
+.table{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:520px}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right;padding:8px 8px;border-bottom:1.5px solid var(--ink);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--f-mono);font-size:14px;white-space:nowrap}
+td:first-child{font-family:var(--f-body);font-weight:600;font-size:15px}
+td.dim{color:var(--muted)}
+.acc{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.acc span.track{width:70px;height:6px;border-radius:9px;background:var(--line);overflow:hidden;display:inline-block}
+.acc span.track i{display:block;height:100%;background:var(--ok)}
+.rounds{display:flex;flex-direction:column}
+.rnd{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.rnd .when{font-size:13px;color:var(--muted)}
+.rnd .s{font:700 16px var(--f-mono);text-align:right}
+.rnd .a{font:500 13px var(--f-mono);color:var(--muted);text-align:right;min-width:4ch}
+.danger{border:1.5px solid var(--bad);color:var(--bad);background:transparent;border-radius:10px;padding:8px 14px;font-weight:600;font-size:14px}
+.danger.fill{background:var(--bad);color:var(--surface)}
+footer{color:var(--muted);font-size:13px;text-align:center}
+body.tabs .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1.5px solid var(--line);
+  padding-top:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tabs-inner{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tab{background:none;border:0;border-radius:12px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;font-weight:600;color:var(--muted)}
+.tab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab:hover{color:var(--ink)}
+.tab[aria-current="page"]{color:var(--ink);background:var(--hover)}
+.tab[aria-current="page"] svg .f{fill:var(--accent)}
+.seg{flex-wrap:wrap}
+.setting{gap:8px}
+.setting .small{margin:0;max-width:60ch}
+.cur{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.cur strong{color:var(--ink);font-family:var(--f-mono);font-weight:700}
+.linkbtn{background:none;border:0;padding:0;color:var(--plot);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.streak{font:700 15px var(--f-mono);color:var(--muted);white-space:nowrap}
+.groups{display:flex;flex-direction:column;gap:18px}
+.gsec{display:flex;flex-direction:column;gap:10px}
+@media (min-width:641px){.grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.prompt.long{font-size:clamp(19px,5.4vw,30px);line-height:1.35}
+.pt{font:600 .62em var(--f-mono);color:var(--muted);margin-top:.5em}
+.mat{display:inline-grid;column-gap:.75em;row-gap:.12em;padding:.12em .55em;position:relative;vertical-align:middle;text-align:right;line-height:1.25}
+.mat::before,.mat::after{content:"";position:absolute;top:0;bottom:0;width:.28em;border:2px solid currentColor}
+.mat::before{left:0;border-right:0}.mat::after{right:0;border-left:0}
+.mat.c1{grid-template-columns:auto;text-align:center}.mat.c2{grid-template-columns:repeat(2,auto)}.mat.c3{grid-template-columns:repeat(3,auto)}
+.answer .mat{row-gap:8px;column-gap:10px;padding:6px 12px}
+.answer .mat .in{width:4.4ch;font-size:clamp(18px,5vw,26px)}
+.in.opt::placeholder{color:var(--muted);opacity:.6}
+.fb .mat{font-family:var(--f-mono);font-size:.95em;margin:2px 0}
+.intg{display:inline-flex;align-items:center;gap:.05em}
+.intg .s{font-size:1.35em;line-height:1}
+.lim{display:inline-flex;flex-direction:column;justify-content:space-between;font-size:.5em;line-height:1.15;align-self:stretch;padding-block:.1em}
+.cgroups{display:flex;flex-direction:column;gap:10px}
+.cgroup{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.glabel{border:0;background:none;padding:6px 4px 6px 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink);min-width:9.5em;text-align:left;text-decoration:underline dotted;text-underline-offset:4px}
+/* coin drop */
+.dropcard{background:var(--surface);border:1.5px solid var(--ink);border-radius:14px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 18px;align-items:center;box-shadow:5px 5px 0 var(--plot)}
+.dropcard svg{width:104px;height:auto}
+.dropcard .txt{display:flex;flex-direction:column;gap:8px;min-width:0}
+@media (max-width:480px){.dropcard{grid-template-columns:1fr}.dropcard svg{display:none}}
+.dbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dbar .dtitle{flex:1;min-width:0;font:600 16px var(--f-body)}
+.dbar .dtitle b{font-family:var(--f-mono)}
+.coincount{font:700 18px var(--f-mono);display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:4px 10px}
+.coincount i{width:14px;height:14px;border-radius:50%;background:var(--coin);border:1.5px solid var(--coin-edge);display:inline-block}
+.board{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;display:flex;justify-content:center}
+#d-canvas{width:100%;max-width:560px;aspect-ratio:1/1;display:block;touch-action:none;border-radius:8px}
+.dctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.dctl .small{margin-left:auto}
+.fnlist{display:flex;flex-direction:column;gap:10px}
+.fn{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:6px 10px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.fn .dot{width:12px;height:12px;border-radius:50%}
+.fnl{font:700 15px var(--f-mono);white-space:nowrap}
+.fexpr{font:600 17px var(--f-mono);border:0;border-bottom:2px solid var(--line);background:transparent;color:var(--ink);padding:4px 2px;min-width:0;width:100%;border-radius:0}
+.fexpr:focus,.fdom:focus{outline:none;border-bottom-color:var(--accent)}
+.fn.err .fexpr{border-bottom-color:var(--bad)}
+.fdomrow{grid-column:2 / -1;display:flex;align-items:center;gap:6px;font:500 13px var(--f-mono);color:var(--muted);flex-wrap:wrap}
+.fdom{width:5.5ch;font:600 14px var(--f-mono);border:0;border-bottom:2px solid var(--line);background:transparent;color:var(--ink);text-align:center;padding:2px;border-radius:0}
+.fdel{border:0;background:none;font-size:22px;line-height:1;color:var(--muted);padding:2px 6px;border-radius:8px}
+.fdel:hover{color:var(--bad);background:var(--hover)}
+.ferr{grid-column:2 / -1;color:var(--bad);font-size:13px}
+.fexpr:disabled,.fdom:disabled{opacity:.6}
+.fdom{-moz-appearance:textfield;appearance:textfield}.fdom::-webkit-inner-spin-button,.fdom::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.dres{display:flex;flex-direction:column;gap:12px}
+.lines{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;font-variant-numeric:tabular-nums;max-width:420px}
+.lines span:nth-child(even){font-family:var(--f-mono);font-weight:700;text-align:right}
+.lines .tot{border-top:1.5px solid var(--ink);padding-top:6px;font-weight:700}
+.syntax{font-size:13px;color:var(--muted);margin:0;max-width:65ch}
+.syntax code{font-family:var(--f-mono);color:var(--ink);background:var(--hover);padding:0 4px;border-radius:4px}
+/* full-width segmented controls */
+.seg.full{display:flex;width:100%;flex-wrap:nowrap}
+.seg.full button{flex:1 1 0;min-width:0;padding:9px 4px;white-space:nowrap;font-size:14px}
+/* compact stats table */
+#s-table table{min-width:0;font-size:13px}
+#s-table th{padding:6px 3px;font-size:11px;letter-spacing:.04em}
+#s-table td{padding:8px 3px;font-size:12.5px}
+#s-table td:first-child{font-size:14px;white-space:normal;padding-left:0}
+#s-table .acc{gap:5px}
+#s-table .acc span.track{width:22px}
+@media (max-width:400px){#s-table .acc span.track{display:none}#v-stats .panel{padding:16px 14px}}
+tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--plot);padding-top:16px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <button class="brand" id="home" aria-label="Menu">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="8" fill="var(--ink)"/><path d="M18.5 4 8 18h7l-2 10 11-15h-7.2z" fill="var(--accent)"/></svg>
+      <span class="wordmark">Blitzrechnen</span>
+    </button>
+  </header>
+
+  <!-- MENU -->
+  <main id="v-menu" class="view" style="display:flex;flex-direction:column;gap:22px">
+    <div>
+      <h1 data-i18n="headline">Mental math against the clock.</h1>
+      <p class="lede" data-i18n="lede">Pick a discipline, answer as many questions as you can before time runs out. Every answer counts toward your statistics.</p>
+    </div>
+    <div class="cur" id="cur"></div>
+    <div class="groups" id="groups"></div>
+    <section class="mix" aria-labelledby="mix-h">
+      <div class="mixhead">
+        <h2 id="mix-h" data-i18n="mixTitle">Mixed mode</h2>
+        <span class="small" id="mix-best"></span>
+      </div>
+      <p class="small" style="margin:0" data-i18n="mixDesc">Choose the categories. Questions come from them in random order.</p>
+      <div class="cgroups" id="chips"></div>
+      <div class="row">
+        <button class="cta" id="mix-start" data-i18n="startMix">Start mix</button>
+        <button class="ghost" id="mix-all" data-i18n="all">All</button>
+        <span class="warn" id="mix-warn" hidden data-i18n="selectOne">Select at least one category.</span>
+      </div>
+    </section>
+    <section class="dropcard" aria-labelledby="drop-h">
+      <div class="txt">
+        <h2 id="drop-h" data-i18n="dropTitle">Coin Drop</h2>
+        <p class="small" style="margin:0" data-i18n="dropDesc">Draw functions that steer falling balls through the coins. More coins and fewer functions mean more points.</p>
+        <span class="small" id="drop-best"></span>
+        <div class="row"><button class="cta" id="drop-open" data-i18n="dropPlay">Play Coin Drop</button></div>
+      </div>
+      <svg viewBox="0 0 104 104" aria-hidden="true"><path d="M0 52h104M52 0v104" stroke="var(--line)" stroke-width="1.5"/><path d="M8 30 Q40 70 70 62 T100 84" fill="none" stroke="var(--plot)" stroke-width="4" stroke-linecap="round"/><circle cx="18" cy="12" r="7" fill="var(--ink)"/><circle cx="52" cy="50" r="7" fill="var(--coin)" stroke="var(--coin-edge)" stroke-width="2"/><circle cx="86" cy="62" r="7" fill="var(--coin)" stroke="var(--coin-edge)" stroke-width="2"/></svg>
+    </section>
+  </main>
+
+  <!-- GAME -->
+  <main id="v-game" class="view" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="hud">
+      <button class="ghost" id="quit" data-i18n="quit">Quit</button>
+      <div class="timer"><div class="bar" id="bar"><i id="bar-i"></i></div><span class="streak" id="streak" hidden></span><span class="secs" id="secs">60</span></div>
+      <div class="score" aria-live="polite"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18.5 4 8 18h7l-2 10 11-15h-7.2z" fill="var(--accent)" stroke="var(--ink)" stroke-width="1.5"/></svg><span id="score">0</span></div>
+    </div>
+    <section class="qcard" id="qcard">
+      <div class="qtop"><span class="tag" id="q-tag"></span><span class="small" id="q-count"></span></div>
+      <p class="instr" id="q-instr"></p>
+      <div class="prompt" id="q-prompt"></div>
+      <div class="answer" id="q-answer"></div>
+      <div class="fb" id="fb" aria-live="assertive"></div>
+      <div class="actions">
+        <span class="small hint" id="kbd-hint" data-i18n="hint">Enter = check · Esc = quit</span>
+        <button class="ghost" id="skip" data-i18n="skip">Skip</button>
+        <button class="cta" id="check" data-i18n="check">Check</button>
+      </div>
+    </section>
+    <div class="keypad" id="keypad" hidden>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="del" aria-label="Delete">⌫</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="/" aria-label="Fraction">/</button>
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="neg" aria-label="Sign">±</button>
+      <button data-k="0">0</button><button data-k="dec" id="k-dec">.</button><button data-k="next" aria-label="Next field">⇥</button><button data-k="go" class="go" aria-label="Check">✓</button>
+      <button data-k="+" class="kx" hidden>+</button><button data-k="-" class="kx" hidden>−</button><button data-k="i" class="kx" hidden style="grid-column:span 2">i</button>
+    </div>
+  </main>
+
+  <!-- RESULT -->
+  <main id="v-result" class="view" hidden style="display:flex;flex-direction:column;gap:16px">
+    <section class="panel">
+      <div><span class="label" id="r-mode"></span></div>
+      <div class="hero"><span class="big" id="r-score">0</span><div style="display:flex;flex-direction:column;gap:6px;padding-bottom:8px"><span id="r-sub" class="small"></span><span class="badge" id="r-best" hidden data-i18n="newBest">New best</span></div></div>
+      <div class="kpis" id="r-kpis"></div>
+      <div class="table" id="r-table"></div>
+      <div class="row"><button class="cta" id="again" data-i18n="again">Play again</button><button class="ghost" id="to-menu" data-i18n="mainMenu">Main menu</button><button class="ghost" id="to-stats" data-i18n="stats">Stats</button></div>
+    </section>
+  </main>
+
+  <!-- STATS -->
+  <main id="v-stats" class="view" hidden style="display:flex;flex-direction:column;gap:16px">
+    <h1 data-i18n="statsTitle">Statistics</h1>
+    <div class="seg full" id="seg-slv" role="group" aria-label="Level"></div>
+    <section class="panel">
+      <div class="kpis" id="s-kpis"></div>
+      <div class="table" id="s-table"></div>
+      <p class="small" style="margin:0" id="s-note"></p>
+    </section>
+    <section class="panel">
+      <h2 data-i18n="dropTitle">Coin Drop</h2>
+      <div class="kpis" id="s-drop"></div>
+    </section>
+    <section class="panel">
+      <h2 data-i18n="recent">Recent rounds</h2>
+      <div class="rounds" id="s-rounds"></div>
+    </section>
+    <div class="row" id="reset-row">
+      <button class="danger" id="reset" data-i18n="reset">Reset statistics</button>
+      <span id="reset-confirm" hidden class="row"><span data-i18n="resetQ">Delete all statistics?</span>
+        <button class="danger fill" id="reset-yes" data-i18n="del">Delete</button><button class="ghost" id="reset-no" data-i18n="cancel">Cancel</button></span>
+    </div>
+  </main>
+  <!-- COIN DROP -->
+  <main id="v-drop" class="view" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="dbar">
+      <button class="ghost" id="d-back" data-i18n="mainMenu">Main menu</button>
+      <span class="dtitle" id="d-title"></span>
+      <span class="coincount"><i></i><span id="d-coins">0/0</span></span>
+    </div>
+    <div class="board"><canvas id="d-canvas" aria-label="Coordinate system with coins"></canvas></div>
+    <div class="dctl">
+      <button class="cta" id="d-start" data-i18n="dropGo">Drop balls</button>
+      <button class="ghost" id="d-reset" data-i18n="dReset">Reset balls</button>
+      <button class="ghost" id="d-new" data-i18n="newLevel">New level</button>
+      <span class="small" id="d-cost"></span>
+    </div>
+    <section class="panel dres" id="d-res" hidden></section>
+    <div class="fnlist" id="d-fns"></div>
+    <div class="row"><button class="ghost" id="d-add" data-i18n="addFn">+ Add function</button><span class="warn" id="d-warn" hidden></span></div>
+    <p class="syntax" id="d-help"></p>
+  </main>
+
+  <!-- SETTINGS -->
+  <main id="v-settings" class="view" hidden style="display:flex;flex-direction:column;gap:16px">
+    <h1 data-i18n="settings">Settings</h1>
+    <section class="panel">
+      <div class="setting"><span class="label" data-i18n="language">Language</span>
+        <div class="seg full" id="seg-lang" role="group"></div></div>
+      <div class="setting"><span class="label" data-i18n="duration">Round length</span>
+        <div class="seg full" id="seg-dur" role="group"></div>
+        <p class="small" id="dur-note"></p></div>
+      <div class="setting"><span class="label" data-i18n="difficulty">Level</span>
+        <div class="seg full" id="seg-diff" role="group"></div>
+        <p class="small" id="diff-note"></p></div>
+    </section>
+    <section class="panel" id="sec-install" hidden>
+      <h2 data-i18n="install">Install app</h2>
+      <p class="small" style="margin:0" data-i18n="installNote">Installed, the app starts without internet and keeps your statistics on this device.</p>
+      <p class="small" style="margin:0" id="ios-hint" hidden data-i18n="iosHint">On iPhone or iPad: tap Share, then Add to Home Screen.</p>
+      <div class="row"><button class="cta" id="btn-install" hidden data-i18n="installBtn">Install</button><span class="small" id="inst-state"></span></div>
+    </section>
+    <section class="panel">
+      <h2 data-i18n="data">Your data</h2>
+      <p class="small" style="margin:0" data-i18n="dataNote">Statistics are stored only on this device. Save a backup file to keep them safe or move them to another device.</p>
+      <div class="row">
+        <button class="ghost" id="btn-export" data-i18n="exportBtn">Save backup</button>
+        <button class="ghost" id="btn-import" data-i18n="importBtn">Load backup</button>
+        <input type="file" id="file-import" accept="application/json,.json" hidden>
+      </div>
+      <p class="small" style="margin:0" id="data-msg" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer data-i18n="footer">Statistics are stored only in this browser.</footer>
+</div>
+
+<nav class="tabbar" id="tabbar" aria-label="Main">
+  <div class="tabs-inner">
+    <button class="tab" data-tab="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="f" d="M13.5 2 4 14h6.5L9 22l11-13h-7z"/></svg><span data-i18n="play">Play</span></button>
+    <button class="tab" data-tab="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><rect class="f" x="5" y="11" width="3.5" height="6" rx="1"/><rect class="f" x="10.25" y="6" width="3.5" height="11" rx="1"/><rect class="f" x="15.5" y="9" width="3.5" height="8" rx="1"/></svg><span data-i18n="stats">Stats</span></button>
+    <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle class="f" cx="15" cy="6" r="2"/><circle class="f" cx="9" cy="12" r="2"/><circle class="f" cx="17" cy="18" r="2"/></svg><span data-i18n="settings">Settings</span></button>
+  </div>
+</nav>
+
+<script>
+(function(){
+"use strict";
+const GROUPS=[['arith',['add','sub','mul','div']],['func',['roots','vertex','line','graph']],['calc',['integ','partial','grad','divg','rot','ode']],['linalg',['det','inv','matvec']]];
+const DISC=GROUPS.flatMap(g=>g[1]);
+const DURS=[30,60,90,120,0];
+const DIFFS=['easy','normal','hard'];
+const KEY='blitzrechnen.v1';
+
+const I18N={
+en:{ds:{add:"Add",sub:"Subtract",mul:"Multiply",div:"Divide",roots:"Zeros",vertex:"Vertex",line:"Line zero",graph:"Graphs",integ:"Integral",partial:"Partial ∂",grad:"Gradient",divg:"Div",rot:"Curl",ode:"ODE",det:"Det 2×2",inv:"Inverse",matvec:"A · v",mix:"Mixed"},
+ th:{n:"#",acc:"Acc.",time:"Ø time",pace:"/min",streak:"Streak"},allLevels:"All levels",noteLv:"Showing level {lv}. # answered · Acc. accuracy · Ø time per correct answer · /min best correct per minute · Streak longest Endless streak.",noteAll:"All levels combined; records show the best of any level. # answered · Acc. accuracy · Ø time per correct answer · /min best correct per minute · Streak longest Endless streak.",legacyNote:"Answers from before the level split are only counted under All levels.",install:"Install app",installNote:"Installed, the app starts without internet and keeps your statistics on this device.",iosHint:"On iPhone or iPad: tap Share, then Add to Home Screen.",installBtn:"Install",installed:"Running as installed app. Works offline.",
+ data:"Your data",dataNote:"Statistics are stored only on this device. Save a backup file to keep them safe or move them to another device.",exportBtn:"Save backup",importBtn:"Load backup",
+ exported:"Backup saved.",imported:"Backup loaded: {n} rounds.",importErr:"This file is not a Blitzrechnen backup.",mainMenu:"Main menu",par1:"Solvable with 1 function",parN:"Solvable with {n} functions",dropTitle:"Coin Drop",dropDesc:"Draw functions that steer falling balls through the coins. More coins and fewer functions mean more points.",dropPlay:"Play Coin Drop",
+ dropGo:"Drop balls",dropStop:"Stop",dReset:"Reset balls",newLevel:"New level",addFn:"+ Add function",dLevel:"Level",xFrom:"x from",xTo:"to",
+ dHelp:"Type functions in x with + − * / ^ and sin, cos, tan, sqrt, abs, exp, ln, pi, e. Example: <code>0.5x^2 − 3</code> or <code>-x/2 + 4</code>. Limit the x range to build ramps; empty means the full width. Tap the grid to read coordinates.",
+ errSyntax:"Can't read this function. Check brackets and operators.",errDomain:"The start of the x range must be smaller than the end.",maxFns:"At most 6 functions.",fixFns:"Fix the marked function first.",
+ coinsLbl:"Coins",allBonus:"All coins bonus",fnsLbl:"Functions",scoreLbl:"Score",bestLbl:"Best",tryAgain:"Try again",nextLevel:"Next level",perfect:"All coins!",
+ costNote:"100 per coin · +200 for all · −50 per function",dRuns:"Runs",dCoins:"Coins collected",dPerfect:"Perfect runs",dBest:"Best score",ballsLeft:"balls falling",
+ stats:"Stats",play:"Play",settings:"Settings",language:"Language",endless:"Endless",change:"Change",round:"Round",finish:"Finish",
+ streak:"Streak",bestStreak:"Best streak",time:"Time",
+ durNote:"Endless has no timer: play as long as you like and tap Finish to save the round. Endless rounds count toward your statistics but not toward the per-minute records.",
+ diffNotes:{easy:"Numbers up to 20, times tables up to 10, parabolas with a = 1. Graph matching with lines, sin, cos and |x|. Calculus in two variables at points from 0 to 2, integrals of lines from 0, small positive matrices, inverses with det = ±1, ODEs with distinct integer roots.",
+  normal:"Two-digit numbers, parabolas with a = ±1. Graph matching adds parabolas and √x. Polynomials up to degree 3 at points from −2 to 2, quadratic integrals, inverses with |det| ≤ 6, ODEs with double roots and leading coefficients.",
+  hard:"Three-digit numbers, a = ±2, half-integer zeros. Graph matching adds eˣ, hyperbolas and expanded parabolas. Three variables for gradient, divergence and curl, mixed second partials, integrals with fractions, sin, cos, eˣ and 1/x, 3×3 matrix-vector products, complex ODE roots."},headline:"Mental math against the clock.",lede:"Pick a discipline and answer as many questions as you can before time runs out. Every answer counts toward your statistics.",
+ duration:"Round length",difficulty:"Level",easy:"Easy",normal:"Normal",hard:"Hard",
+ mixTitle:"Mixed mode",mixDesc:"Choose the categories. Questions come from them in random order.",startMix:"Start mix",all:"All",selectOne:"Select at least one category.",
+ quit:"Quit",hint:"Enter = check · Esc = quit",skip:"Skip",check:"Check",again:"Play again",menu:"Menu",newBest:"New best",
+ statsTitle:"Statistics",recent:"Recent rounds",reset:"Reset statistics",resetQ:"Delete all statistics?",del:"Delete",cancel:"Cancel",
+ footer:"Statistics are stored only in this browser.",
+ d:{add:"Addition",sub:"Subtraction",mul:"Multiplication",div:"Division",roots:"Parabola zeros",vertex:"Parabola vertex",line:"Zero of a line",graph:"Match the graph",integ:"Definite integral",partial:"Partial derivative",grad:"Gradient",divg:"Divergence",rot:"Curl",ode:"Linear ODE",det:"2×2 determinant",inv:"2×2 inverse",matvec:"Matrix × vector",mix:"Mixed"},
+ g:{arith:"Arithmetic",func:"Functions",calc:"Calculus",linalg:"Linear algebra"},entry:"Entry",
+ q:{add:"Add.",sub:"Subtract.",mul:"Multiply.",div:"Divide.",roots:"Find both zeros of the parabola.",vertex:"Find the vertex S(x | y).",line:"Where does the line cross the x-axis?",graph:"Which graph belongs to this function? (keys 1–3)",
+  integ:"Evaluate the integral. Fractions like 8/3 are fine.",partial:"Evaluate the partial derivative at P.",grad:"Compute the gradient ∇f at P.",divg:"Compute the divergence div F at P.",rot:"Compute the curl rot F at P (a scalar in 2D: ∂Q/∂x − ∂P/∂y).",
+  ode:"Enter the roots of the characteristic polynomial. Complex roots as a+bi.",det:"Compute det A.",inv:"Invert A. Put 1/det in the prefactor or leave it empty (= 1).",matvec:"Compute A · v."},
+ correct:"Correct",wrong:"Not quite. Answer:",skipped:"Skipped. Answer:",graphWord:"Graph",
+ notPlayed:"Not played yet",best:"Best",perMin:"/min",answered:"answered",accuracy:"Accuracy",avgTime:"Avg. time",pace:"Correct per min",
+ questions:"Answered",discipline:"Discipline",bestPace:"Best /min",correctCol:"Correct",
+ rounds:"Rounds",totalQ:"Answered",totalAcc:"Accuracy",totalTime:"Practice time",
+ noRounds:"No rounds yet. Finish one and it shows up here.",bestNote:"Best /min is for the level selected in the menu",
+ of:"of",level:"Level",sec:"s",min:"min",question:"Question"},
+de:{ds:{add:"Addition",sub:"Subtraktion",mul:"Multiplik.",div:"Division",roots:"Nullstellen",vertex:"Scheitel",line:"Gerade",graph:"Graphen",integ:"Integral",partial:"Partiell ∂",grad:"Gradient",divg:"Divergenz",rot:"Rotation",ode:"DGL",det:"Det 2×2",inv:"Inverse",matvec:"A · v",mix:"Mix"},
+ th:{n:"#",acc:"Quote",time:"Ø Zeit",pace:"/min",streak:"Serie"},allLevels:"Alle Stufen",noteLv:"Angezeigt: Stufe {lv}. # beantwortet · Quote Trefferquote · Ø Zeit pro richtiger Antwort · /min Rekord Richtige pro Minute · Serie längste Endlos-Serie.",noteAll:"Alle Stufen zusammen; Rekorde zeigen den besten Wert aller Stufen. # beantwortet · Quote Trefferquote · Ø Zeit pro richtiger Antwort · /min Rekord Richtige pro Minute · Serie längste Endlos-Serie.",legacyNote:"Antworten von vor der Aufteilung nach Stufen zählen nur unter Alle Stufen.",install:"App installieren",installNote:"Installiert startet die App ohne Internet und behält deine Statistik auf diesem Gerät.",iosHint:"Auf iPhone oder iPad: Teilen antippen, dann „Zum Home-Bildschirm“.",installBtn:"Installieren",installed:"Läuft als installierte App. Funktioniert offline.",
+ data:"Deine Daten",dataNote:"Die Statistik wird nur auf diesem Gerät gespeichert. Speichere eine Backup-Datei, um sie zu sichern oder auf ein anderes Gerät zu übertragen.",exportBtn:"Backup speichern",importBtn:"Backup laden",
+ exported:"Backup gespeichert.",imported:"Backup geladen: {n} Runden.",importErr:"Diese Datei ist kein Blitzrechnen-Backup.",mainMenu:"Hauptmenü",par1:"Lösbar mit 1 Funktion",parN:"Lösbar mit {n} Funktionen",dropTitle:"Münzfall",dropDesc:"Zeichne Funktionen, die fallende Bälle durch die Münzen lenken. Mehr Münzen und weniger Funktionen bringen mehr Punkte.",dropPlay:"Münzfall spielen",
+ dropGo:"Bälle fallen lassen",dropStop:"Stopp",dReset:"Bälle zurücksetzen",newLevel:"Neues Level",addFn:"+ Funktion hinzufügen",dLevel:"Level",xFrom:"x von",xTo:"bis",
+ dHelp:"Funktionen in x mit + − * / ^ sowie sin, cos, tan, sqrt, abs, exp, ln, pi, e eingeben. Beispiel: <code>0,5x^2 − 3</code> oder <code>-x/2 + 4</code>. Den x-Bereich begrenzen, um Rampen zu bauen; leer heißt volle Breite. Tippe ins Gitter, um Koordinaten abzulesen.",
+ errSyntax:"Funktion nicht lesbar. Klammern und Rechenzeichen prüfen.",errDomain:"Der Anfang des x-Bereichs muss kleiner als das Ende sein.",maxFns:"Höchstens 6 Funktionen.",fixFns:"Erst die markierte Funktion korrigieren.",
+ coinsLbl:"Münzen",allBonus:"Bonus alle Münzen",fnsLbl:"Funktionen",scoreLbl:"Punkte",bestLbl:"Bestwert",tryAgain:"Nochmal versuchen",nextLevel:"Nächstes Level",perfect:"Alle Münzen!",
+ costNote:"100 pro Münze · +200 für alle · −50 pro Funktion",dRuns:"Versuche",dCoins:"Gesammelte Münzen",dPerfect:"Perfekte Versuche",dBest:"Bestwert",ballsLeft:"Bälle unterwegs",
+ stats:"Statistik",play:"Spielen",settings:"Einstellungen",language:"Sprache",endless:"Endlos",change:"Ändern",round:"Runde",finish:"Fertig",
+ streak:"Serie",bestStreak:"Längste Serie",time:"Zeit",
+ durNote:"Endlos hat keinen Timer: Spiel so lange du willst und tippe auf Fertig, um die Runde zu speichern. Endlos-Runden zählen zur Statistik, aber nicht zu den Rekorden pro Minute.",
+ diffNotes:{easy:"Zahlen bis 20, Einmaleins bis 10, Parabeln mit a = 1. Graph zuordnen mit Geraden, sin, cos und |x|. Analysis mit zwei Variablen in Punkten von 0 bis 2, Integrale über Geraden ab 0, kleine positive Matrizen, Inverse mit det = ±1, DGL mit verschiedenen ganzzahligen Nullstellen.",
+  normal:"Zweistellige Zahlen, Parabeln mit a = ±1. Graph zuordnen zusätzlich mit Parabeln und √x. Polynome bis Grad 3 in Punkten von −2 bis 2, quadratische Integrale, Inverse mit |det| ≤ 6, DGL mit doppelten Nullstellen und Leitkoeffizienten.",
+  hard:"Dreistellige Zahlen, a = ±2, halbzahlige Nullstellen. Graph zuordnen zusätzlich mit eˣ, Hyperbeln und ausmultiplizierten Parabeln. Drei Variablen bei Gradient, Divergenz und Rotation, gemischte zweite Ableitungen, Integrale mit Brüchen, sin, cos, eˣ und 1/x, 3×3 Matrix mal Vektor, komplexe DGL-Nullstellen."},headline:"Kopfrechnen gegen die Uhr.",lede:"Wähle eine Disziplin und löse so viele Aufgaben wie möglich, bevor die Zeit abläuft. Jede Antwort fließt in deine Statistik ein.",
+ duration:"Rundenlänge",difficulty:"Stufe",easy:"Leicht",normal:"Normal",hard:"Schwer",
+ mixTitle:"Mix-Modus",mixDesc:"Wähle die Kategorien. Die Aufgaben kommen daraus in zufälliger Reihenfolge.",startMix:"Mix starten",all:"Alle",selectOne:"Wähle mindestens eine Kategorie.",
+ quit:"Beenden",hint:"Enter = prüfen · Esc = beenden",skip:"Überspringen",check:"Prüfen",again:"Nochmal",menu:"Menü",newBest:"Neuer Rekord",
+ statsTitle:"Statistik",recent:"Letzte Runden",reset:"Statistik zurücksetzen",resetQ:"Gesamte Statistik löschen?",del:"Löschen",cancel:"Abbrechen",
+ footer:"Die Statistik wird nur in diesem Browser gespeichert.",
+ d:{add:"Addition",sub:"Subtraktion",mul:"Multiplikation",div:"Division",roots:"Nullstellen Parabel",vertex:"Scheitelpunkt Parabel",line:"Nullstelle Gerade",graph:"Graph zuordnen",integ:"Bestimmtes Integral",partial:"Partielle Ableitung",grad:"Gradient",divg:"Divergenz",rot:"Rotation",ode:"DGL konst. Koeff.",det:"Determinante 2×2",inv:"Inverse 2×2",matvec:"Matrix × Vektor",mix:"Mix"},
+ g:{arith:"Grundrechnen",func:"Funktionen",calc:"Analysis",linalg:"Lineare Algebra"},entry:"Eintrag",
+ q:{add:"Addiere.",sub:"Subtrahiere.",mul:"Multipliziere.",div:"Dividiere.",roots:"Bestimme beide Nullstellen der Parabel.",vertex:"Bestimme den Scheitelpunkt S(x | y).",line:"Wo schneidet die Gerade die x-Achse?",graph:"Welcher Graph gehört zur Funktion? (Tasten 1–3)",
+  integ:"Berechne das Integral. Brüche wie 8/3 sind erlaubt.",partial:"Werte die partielle Ableitung im Punkt P aus.",grad:"Berechne den Gradienten ∇f im Punkt P.",divg:"Berechne die Divergenz div F im Punkt P.",rot:"Berechne die Rotation rot F im Punkt P (in 2D ein Skalar: ∂Q/∂x − ∂P/∂y).",
+  ode:"Gib die Nullstellen des charakteristischen Polynoms ein. Komplexe als a+bi.",det:"Berechne det A.",inv:"Invertiere A. 1/det in den Vorfaktor schreiben oder leer lassen (= 1).",matvec:"Berechne A · v."},
+ correct:"Richtig",wrong:"Leider falsch. Lösung:",skipped:"Übersprungen. Lösung:",graphWord:"Graph",
+ notPlayed:"Noch nicht gespielt",best:"Rekord",perMin:"/min",answered:"beantwortet",accuracy:"Trefferquote",avgTime:"Ø Zeit",pace:"Richtige pro min",
+ questions:"Beantwortet",discipline:"Disziplin",bestPace:"Rekord /min",correctCol:"Richtig",
+ rounds:"Runden",totalQ:"Beantwortet",totalAcc:"Trefferquote",totalTime:"Übungszeit",
+ noRounds:"Noch keine Runden. Spiel eine zu Ende, dann erscheint sie hier.",bestNote:"Rekord /min gilt für die im Menü gewählte Stufe",
+ of:"von",level:"Stufe",sec:"s",min:"min",question:"Aufgabe"}
+};
+
+/* ---------- storage ---------- */
+function fresh(){const d={};DISC.forEach(k=>d[k]={n:0,ok:0,tOk:0});return{v:1,disc:d,best:{},rounds:[],nRounds:0,secs:0,drop:{runs:0,coins:0,perfect:0,best:{}}}}
+function load(k,def){try{const s=JSON.parse(localStorage.getItem(k));if(s)return s}catch(e){}return def}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function ensureS(){if(!S.lv&&DISC.some(k=>S.disc[k]&&S.disc[k].n))S.legacy=true;
+  DISC.forEach(k=>{if(!S.disc[k])S.disc[k]={n:0,ok:0,tOk:0}});if(!S.drop)S.drop={runs:0,coins:0,perfect:0,best:{}};
+  S.best=S.best||{};S.rounds=S.rounds||[];S.streak=S.streak||{};S.lv=S.lv||{};S.drop.lv=S.drop.lv||{};S.drop.best=S.drop.best||{};
+  if(S.nRounds==null){S.nRounds=S.rounds.length;S.secs=S.rounds.reduce((a,x)=>a+x.dur,0)}
+  DIFFS.forEach(df=>{const L=S.lv[df]=S.lv[df]||{};L.disc=L.disc||{};L.streak=L.streak||{};
+    if(L.rounds==null){const rs=S.rounds.filter(x=>x.diff===df);L.rounds=rs.length;L.secs=rs.reduce((a,x)=>a+x.dur,0)}
+    DISC.forEach(k=>{if(!L.disc[k])L.disc[k]={n:0,ok:0,tOk:0}});S.drop.lv[df]=S.drop.lv[df]||{runs:0,coins:0,perfect:0}})}
+let S=load(KEY,null); if(!S||S.v!==1)S=fresh(); ensureS();
+let P=Object.assign({lang:'en',dur:60,diff:'normal',mix:DISC.slice()},load(KEY+'.prefs',{}));
+const persist=()=>{save(KEY,S);save(KEY+'.prefs',P)};
+const T=()=>I18N[P.lang];
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nz=(a,b)=>{let v;do v=R(a,b);while(v===0);return v};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const MINUS='−';
+function num(n,dp){n=+n; if(Object.is(n,-0))n=0; let s=Number.isInteger(n)?String(Math.abs(n)):Math.abs(n).toFixed(dp??1).replace(/\.?0+$/,'');
+  if(P.lang==='de')s=s.replace('.',','); return (n<0?MINUS:'')+s}
+function coefAbs(c){const a=Math.abs(c); if(a===0.5)return '½'; return num(a)}
+function poly(terms){let out='',first=true;for(const [c,v] of terms){if(c===0)continue;const a=Math.abs(c);const cs=(v&&a===1)?'':coefAbs(c);
+  if(first){out+=(c<0?MINUS:'')+cs+v;first=false}else out+=' '+(c<0?MINUS:'+')+' '+cs+v}return out||'0'}
+function lead(a){return a===1?'':a===-1?MINUS:(a<0?MINUS:'')+coefAbs(a)}
+function vform(a,h,k){let s=lead(a)+(h===0?'x²':'(x '+(h>0?MINUS:'+')+' '+num(Math.abs(h))+')²');if(k!==0)s+=' '+(k>0?'+':MINUS)+' '+num(Math.abs(k));return s}
+const fx=s=>'<span class="fx">f(x) =</span> '+s;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function parse(s){s=String(s).trim().replace(/−/g,'-').replace(/,/g,'.').replace(/\s+/g,'');if(!s)return NaN;
+  if(s.includes('/')){const [a,b]=s.split('/');const v=Number(a)/Number(b);return (b===''||!isFinite(v))?NaN:v}
+  return /^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)?Number(s):NaN}
+const eq=(a,b)=>Math.abs(a-b)<1e-6;
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
+function frac(n,d){if(d<0){n=-n;d=-d}const g=gcd(n,d);n/=g;d/=g;return d===1?num(n):(n<0?MINUS:'')+Math.abs(n)+'/'+d}
+/* complex numbers for ODE roots */
+function parseC(s){s=String(s).trim().replace(/−/g,'-').replace(/,/g,'.').replace(/[\s*·]/g,'');if(!s)return null;
+  if(!s.endsWith('i')){const v=parse(s);return isNaN(v)?null:{re:v,im:0}}
+  const body=s.slice(0,-1);let k=-1;for(let j=body.length-1;j>0;j--){if(body[j]==='+'||body[j]==='-'){k=j;break}}
+  const reS=k>0?body.slice(0,k):'',imS=k>0?body.slice(k):body;
+  const re=reS?parse(reS):0;const im=imS===''||imS==='+'?1:imS==='-'?-1:parse(imS);
+  return isNaN(re)||isNaN(im)?null:{re,im}}
+const ceq=(a,b)=>eq(a.re,b.re)&&eq(a.im,b.im);
+function cfmt(c){const ia=Math.abs(c.im),ip=(ia===1?'':num(ia))+'i';if(!c.im)return num(c.re);
+  if(!c.re)return (c.im<0?MINUS:'')+ip;return `${num(c.re)} ${c.im<0?MINUS:'+'} ${ip}`}
+/* multivariate polynomials: terms {c, e:[ex,ey,ez]} */
+const VARS=['x','y','z'],SUP=['','','²','³','⁴'];
+const pEval=(P,pt)=>P.reduce((s,m)=>s+m.c*m.e.reduce((a,k,i)=>a*Math.pow(pt[i]||0,k),1),0);
+const pD=(P,v)=>P.filter(m=>m.e[v]>0).map(m=>({c:m.c*m.e[v],e:m.e.map((k,i)=>i===v?k-1:k)}));
+const deg=m=>m.e[0]+m.e[1]+m.e[2];
+const pStr=P=>poly([...P].sort((a,b)=>deg(b)-deg(a)||b.e[0]-a.e[0]).map(m=>[m.c,m.e.map((k,i)=>k?VARS[i]+SUP[k]:'').join('')]));
+function randPoly(nv,nt,maxDeg,cr){const map=new Map();let n=0;while(map.size<nt&&n++<60){const e=[0,0,0];const dg=R(1,maxDeg);
+  for(let i=0;i<dg;i++)e[R(0,nv-1)]++;if(e.some(k=>k>3))continue;const key=e.join();if(!map.has(key))map.set(key,{c:nz(-cr,cr),e})}return [...map.values()]}
+function calcCfg(d){return d==='easy'?{nv:2,deg:2,cr:4,lo:0,hi:2}:d==='normal'?{nv:2,deg:3,cr:5,lo:-2,hi:2}:{nv:3,deg:3,cr:4,lo:-2,hi:2}}
+function randPt(c){let p;do p=Array.from({length:c.nv},()=>R(c.lo,c.hi));while(p.every(v=>v===0));return p}
+const fArgs=nv=>VARS.slice(0,nv).join(', ');
+const ptHtml=p=>`<div class="pt">P(${p.map(v=>num(v)).join(' | ')})</div>`;
+function mat(rows){const c=rows[0].length;return `<span class="mat c${c}">${rows.flat().map(v=>`<span>${typeof v==='number'?num(v):v}</span>`).join('')}</span>`}
+const colIn=n=>`<span class="mat c1">${'{in}'.repeat(n)}</span>`;
+const vecTxt=v=>'('+v.map(x=>num(x)).join(', ')+')';
+const intg=(a,b)=>`<span class="intg"><span class="s">∫</span><span class="lim"><span>${b}</span><span>${a}</span></span></span>`;
+
+/* ---------- question generators ---------- */
+const G={
+add(d){const r={easy:[[1,20],[1,20]],normal:[[10,99],[10,99]],hard:[[100,999],[10,999]]}[d];const a=R(...r[0]),b=R(...r[1]);
+  return {kind:'num',prompt:`${num(a)} + ${num(b)}`,ans:a+b,slots:['=']}},
+sub(d){let a,b;if(d==='easy'){a=R(5,20);b=R(1,a)}else if(d==='normal'){a=R(20,99);b=R(10,a)}else{a=R(100,999);b=R(10,999)}
+  return {kind:'num',prompt:`${num(a)} ${MINUS} ${num(b)}`,ans:a-b,slots:['=']}},
+mul(d){const r={easy:[[2,10],[2,10]],normal:[[2,12],[3,20]],hard:[[11,25],[3,19]]}[d];const a=R(...r[0]),b=R(...r[1]);
+  return {kind:'num',prompt:`${num(a)} × ${num(b)}`,ans:a*b,slots:['=']}},
+div(d){const r={easy:[[2,10],[2,10]],normal:[[2,12],[3,20]],hard:[[11,25],[3,19]]}[d];const b=R(...r[0]),q=R(...r[1]);
+  return {kind:'num',prompt:`${num(b*q)} ÷ ${num(b)}`,ans:q,slots:['=']}},
+roots(d){const a=d==='easy'?1:d==='normal'?pick([1,1,-1]):pick([1,-1,2,-2]);const m=d==='easy'?6:d==='normal'?9:8;
+  const r1=R(-m,m),r2=R(-m,m);
+  return {kind:'pair',ordered:false,prompt:fx(poly([[a,'x²'],[-a*(r1+r2),'x'],[a*r1*r2,'']])),ans:[r1,r2],
+    slots:['x₁ =','x₂ ='],show:()=>`x₁ = ${num(r1)}, x₂ = ${num(r2)}`}},
+vertex(d){const a=d==='easy'?1:d==='normal'?pick([1,-1]):pick([1,-1,2,-2]);const hm=d==='easy'?5:6,km=d==='easy'?9:d==='normal'?10:12;
+  const h=R(-hm,hm),k=R(-km,km);
+  return {kind:'pair',ordered:true,prompt:fx(poly([[a,'x²'],[-2*a*h,'x'],[a*h*h+k,'']])),ans:[h,k],
+    slots:['S(','|'],tail:')',show:()=>`S(${num(h)} | ${num(k)})`}},
+line(d){let m,r;if(d==='hard'&&Math.random()<.4){m=pick([2,4,-2,-4,6,-6]);r=R(-6,5)+0.5}
+  else{m=d==='easy'?nz(-5,5):nz(-9,9);r=d==='easy'?R(-9,9):R(-12,12)}
+  const b=-m*r; if(b===0&&Math.random()<.7)return G.line(d);
+  return {kind:'num',prompt:fx(poly([[m,'x'],[b,'']])),ans:r,slots:['x₀ =']}},
+graph(d){
+  const kt=k=>k?` ${k>0?'+':MINUS} ${num(Math.abs(k))}`:'';
+  const sh=h=>h===0?'x':`x ${h>0?MINUS:'+'} ${num(Math.abs(h))}`;
+  const bx=b=>(b===1?'':coefAbs(b))+'x';
+  const F={
+    lin:{l:p=>poly([[p[0],'x'],[p[1],'']]),f:p=>x=>p[0]*x+p[1]},
+    quadV:{l:p=>vform(p[0],p[1],p[2]),f:p=>x=>p[0]*(x-p[1])**2+p[2]},
+    quadE:{l:p=>poly([[p[0],'x²'],[-2*p[0]*p[1],'x'],[p[0]*p[1]*p[1]+p[2],'']]),f:p=>x=>p[0]*(x-p[1])**2+p[2]},
+    sin:{l:p=>`${lead(p[0])}sin(${bx(p[1])})${kt(p[2])}`,f:p=>x=>p[0]*Math.sin(p[1]*x)+p[2]},
+    cos:{l:p=>`${lead(p[0])}cos(${bx(p[1])})${kt(p[2])}`,f:p=>x=>p[0]*Math.cos(p[1]*x)+p[2]},
+    abs:{l:p=>`${lead(p[0])}|${sh(p[1])}|${kt(p[2])}`,f:p=>x=>p[0]*Math.abs(x-p[1])+p[2]},
+    sqrt:{l:p=>`${lead(p[0])}√(${sh(p[1])})${kt(p[2])}`.replace('√(x)','√x'),f:p=>x=>p[0]*Math.sqrt(x-p[1])+p[2]},
+    exp:{l:p=>`${lead(p[0])}e<sup>${p[1]<0?MINUS:''}x</sup>${kt(p[2])}`,f:p=>x=>p[0]*Math.exp(p[1]*x)+p[2]},
+    hyp:{l:p=>`${p[0]<0?MINUS:''}${Math.abs(p[0])}/(${sh(p[1])})${kt(p[2])}`,f:p=>x=>p[0]/(x-p[1])+p[2]}};
+  const pool=d==='easy'?['lin','lin','sin','cos','abs']:d==='normal'?['lin','quadV','sin','cos','abs','sqrt']:['quadE','sin','cos','abs','sqrt','exp','hyp','lin'];
+  const fam=pick(pool);let p,cands;const c=(f,q)=>({f,p:q});
+  if(fam==='lin'){const m=pick([-3,-2,-1,-0.5,0.5,1,2,3]),b=R(-4,4);p=[m,b];
+    cands=[[-m,b],[m,-b],[m,b+(b>=0?-3:3)],[m*2,b],[-m,-b]].filter(q=>Math.abs(q[0])<=4).map(q=>c('lin',q))}
+  else if(fam==='quadV'||fam==='quadE'){const a=fam==='quadE'?pick([1,-1]):pick([1,-1,0.5,-0.5]),h=R(-3,3),k=R(-4,4);p=[a,h,k];
+    cands=[[-a,h,k],[a,-h,k],[a,h,-k],[a,h+(h>0?-3:3),k],[a,h,k+(k>0?-3:3)]].map(q=>c(fam,q));if(fam==='quadV')cands.push(c('abs',[a,h,k]))}
+  else if(fam==='sin'||fam==='cos'){const a=d==='easy'?pick([1,2,3,-1,-2]):pick([1,2,3,-1,-2,-3]),b=d==='easy'?1:d==='normal'?pick([1,1,2]):pick([0.5,1,2]),k=d==='easy'?0:R(-2,2);p=[a,b,k];
+    const o=fam==='sin'?'cos':'sin';cands=[c(o,p),c(fam,[-a,b,k]),c(fam,[a,b===2?1:2,k]),c(fam,[a,b,k+(k>0?-2:2)]),c(o,[-a,b,k])]}
+  else if(fam==='abs'){const a=d==='easy'?pick([1,-1]):pick([1,-1,2,0.5,-0.5]),h=d==='easy'?0:R(-3,3),k=R(-3,3);p=[a,h,k];
+    cands=[c('abs',[-a,h,k]),c('abs',[a,-h,k]),c('abs',[a,h,-k]),c('abs',[a,h,k+(k>0?-3:3)]),c(d==='easy'?'lin':'quadV',d==='easy'?[a,k]:[a,h,k])]}
+  else if(fam==='sqrt'){const a=pick([1,2,-1,-2]),h=R(-4,1),k=R(-3,2);p=[a,h,k];
+    cands=[c('sqrt',[-a,h,k]),c('sqrt',[a,h+3,k]),c('sqrt',[a,h,k+(k>0?-3:3)]),c('sqrt',[a,-h,k])]}
+  else if(fam==='exp'){const a=pick([1,-1,0.5,2]),sg=pick([1,-1]),k=R(-3,2);p=[a,sg,k];
+    cands=[c('exp',[a,-sg,k]),c('exp',[-a,sg,k]),c('exp',[a,sg,k+(k>0?-3:3)]),c('exp',[-a,-sg,k])]}
+  else{const a=pick([1,2,3,-1,-2,-3]),h=R(-2,2),k=R(-2,2);p=[a,h,k];
+    cands=[c('hyp',[-a,h,k]),c('hyp',[a,-h,k]),c('hyp',[a,h,-k]),c('hyp',[a,h+(h>0?-2:2),k])]}
+  const correct=c(fam,p);const key=o=>o.f+':'+o.p.map(v=>v+0).join('|');const seen=new Set([key(correct)]);const ds=[];
+  for(const o of shuffle(cands)){if(!seen.has(key(o))){seen.add(key(o));ds.push(o)}if(ds.length===2)break}
+  if(ds.length<2)return G.graph(d);
+  const opts=shuffle([correct,...ds]);
+  return {kind:'choice',prompt:fx(F[fam].l(p)),ans:opts.indexOf(correct),svgs:opts.map(o=>plot(F[o.f].f(o.p)))}},
+
+integ(d){
+  if(d==='hard'&&Math.random()<.3){const k=pick([1,2,3,4,-1,-2,-3]);const lk=lead(k)+(Math.abs(k)===1?'':' ');
+    const o=pick([{f:lk+'sin x',a:'0',b:'π',v:2},{f:lk+'cos x',a:'0',b:'π/2',v:1},{f:(k<0?MINUS:'')+Math.abs(k)+'/x',a:'1',b:'e',v:1},{f:lk+'eˣ',a:'0',b:'ln 2',v:1}]);
+    return {kind:'num',long:true,prompt:`${intg(o.a,o.b)} ${o.f} dx`,ans:k*o.v,slots:['=']}}
+  for(let t=0;t<400;t++){let a,b,cs;
+    if(d==='easy'){a=0;b=R(1,4);cs=[R(-4,4),nz(-4,4)]}
+    else if(d==='normal'){a=R(-2,1);b=R(a+1,3);cs=[R(-4,4),R(-4,4),nz(-3,3)]}
+    else{a=R(-2,1);b=R(a+1,3);cs=[R(-4,4),R(-4,4),R(-3,3),nz(-2,2)]}
+    let N=0;cs.forEach((c,n)=>{N+=c*(Math.pow(b,n+1)-Math.pow(a,n+1))*12/(n+1)});
+    const den=12/gcd(N,12);if(N===0||den>(d==='hard'?3:1))continue;
+    const terms=cs.map((c,n)=>[c,n?'x'+SUP[n]:'']).reverse();
+    const body=poly(terms);const multi=cs.filter(c=>c).length>1;
+    return {kind:'num',long:true,prompt:`${intg(num(a),num(b))} ${multi?'('+body+')':body} dx`,ans:N/12,slots:['='],show:()=>frac(N,12)}}
+  return G.integ('easy')},
+partial(d){const c=calcCfg(d);let P,v,w=null,D;
+  do{P=randPoly(c.nv,d==='easy'?2:3,c.deg,c.cr);v=R(0,c.nv-1);D=pD(P,v);
+    if(d==='hard'&&Math.random()<.35){w=(v+R(1,2))%3;D=pD(D,w)}else w=null}while(!D.length);
+  const p=randPt(c);const lbl=w===null?`∂f/∂${VARS[v]}`:`∂²f/∂${VARS[v]}∂${VARS[w]}`;
+  return {kind:'num',long:true,prompt:`<span class="fx">f(${fArgs(c.nv)}) =</span> ${pStr(P)}${ptHtml(p)}`,ans:pEval(D,p),slots:[lbl+'(P) =']}},
+grad(d){const c=calcCfg(d);let P,G2;
+  do{P=randPoly(c.nv,c.nv===3?3:2+R(0,1),c.deg,c.cr);G2=VARS.slice(0,c.nv).map((_,i)=>pD(P,i))}while(G2.filter(x=>x.length).length<Math.min(2,c.nv));
+  const p=randPt(c);const ans=G2.map(D=>pEval(D,p));
+  return {kind:'vec',ordered:true,long:true,prompt:`<span class="fx">f(${fArgs(c.nv)}) =</span> ${pStr(P)}${ptHtml(p)}`,ans,html:`<span>∇f(P) =</span> ${colIn(c.nv)}`,show:()=>vecTxt(ans)}},
+divg(d){const c=calcCfg(d);let F,Ds;
+  do{F=VARS.slice(0,c.nv).map(()=>randPoly(c.nv,R(1,2),c.deg,c.cr));Ds=F.map((Pi,i)=>pD(Pi,i))}while(Ds.filter(x=>x.length).length<2);
+  const p=randPt(c);const ans=Ds.reduce((s,D)=>s+pEval(D,p),0);
+  return {kind:'num',long:true,prompt:`<span class="fx">F(${fArgs(c.nv)}) =</span> ${mat(F.map(Pi=>[pStr(Pi)]))}${ptHtml(p)}`,ans,slots:['div F(P) =']}},
+rot(d){const c=calcCfg(d);const p=()=>randPt(c);let F;
+  if(c.nv===2){let a,b;do{F=[randPoly(2,R(1,2),c.deg,c.cr),randPoly(2,R(1,2),c.deg,c.cr)];a=pD(F[1],0);b=pD(F[0],1)}while(!a.length||!b.length);
+    const pt=p();const ans=pEval(a,pt)-pEval(b,pt);
+    return {kind:'num',long:true,prompt:`<span class="fx">F(x, y) =</span> ${mat(F.map(Pi=>[pStr(Pi)]))}${ptHtml(pt)}`,ans,slots:['rot F(P) =']}}
+  let C;do{F=[0,1,2].map(()=>randPoly(3,R(1,2),c.deg,c.cr));
+    C=[[pD(F[2],1),pD(F[1],2)],[pD(F[0],2),pD(F[2],0)],[pD(F[1],0),pD(F[0],1)]]}while(C.filter(x=>x[0].length||x[1].length).length<2);
+  const pt=p();const ans=C.map(([u,v])=>pEval(u,pt)-pEval(v,pt));
+  return {kind:'vec',ordered:true,long:true,prompt:`<span class="fx">F(x, y, z) =</span> ${mat(F.map(Pi=>[pStr(Pi)]))}${ptHtml(pt)}`,ans,html:`<span>rot F(P) =</span> ${colIn(3)}`,show:()=>vecTxt(ans)}},
+ode(d){let l=1,p,q,ans;
+  if(d==='hard'&&Math.random()<.6){const al=R(-3,3),be=R(1,4);p=-2*al;q=al*al+be*be;ans=[{re:al,im:be},{re:al,im:-be}]}
+  else{const r1=R(-5,5);let r2;do r2=R(-5,5);while(d==='easy'&&r2===r1);if(d!=='easy'&&Math.random()<.2)r2=r1;
+    p=-(r1+r2);q=r1*r2;ans=[{re:r1,im:0},{re:r2,im:0}];if(d!=='easy'&&Math.random()<.3)l=pick([2,3,-1])}
+  return {kind:'vec',ordered:false,complex:true,long:true,prompt:`${poly([[l,'y″'],[l*p,'y′'],[l*q,'y']])} = 0`,ans,slots:['λ₁ =','λ₂ ='],show:()=>`λ₁ = ${cfmt(ans[0])}, λ₂ = ${cfmt(ans[1])}`}},
+det(d){const r=d==='easy'?[0,5]:d==='normal'?[-6,9]:[-12,15];const m=[R(...r),R(...r),R(...r),R(...r)];
+  return {kind:'num',long:true,prompt:`det ${mat([[m[0],m[1]],[m[2],m[3]]])}`,ans:m[0]*m[3]-m[1]*m[2],slots:['=']}},
+inv(d){let m,D;const r=d==='easy'?[0,5]:d==='normal'?[-5,6]:[-9,9];
+  for(let t=0;t<2000;t++){m=[R(...r),R(...r),R(...r),R(...r)];D=m[0]*m[3]-m[1]*m[2];
+    if(D!==0&&(d==='easy'?Math.abs(D)===1:d==='normal'?Math.abs(D)<=6:Math.abs(D)<=30))break}
+  const adj=[m[3],-m[1],-m[2],m[0]];const inv=adj.map(x=>x/D);
+  return {kind:'vec',long:true,prompt:`A = ${mat([[m[0],m[1]],[m[2],m[3]]])}`,ans:inv,
+    html:`<span>A⁻¹ =</span> <span class="slot" style="flex-wrap:nowrap">{in?}<span>·</span><span class="mat c2">{in}{in}{in}{in}</span></span>`,
+    check:v=>{const f=v[0]==null?1:v[0];return inv.every((x,i)=>eq(f*v[i+1],x))},
+    showHtml:()=>`${Math.abs(D)===1?(D<0?MINUS:''):frac(1,D)+' · '}${mat([[adj[0],adj[1]],[adj[2],adj[3]]])}`}},
+matvec(d){const n=d==='hard'?3:2;const r=d==='easy'?[0,5]:d==='normal'?[-5,6]:[-4,5];
+  const A=Array.from({length:n},()=>Array.from({length:n},()=>R(...r)));const v=Array.from({length:n},()=>R(...r));
+  const ans=A.map(row=>row.reduce((s,x,i)=>s+x*v[i],0));
+  return {kind:'vec',ordered:true,long:true,prompt:`${mat(A)} · ${mat(v.map(x=>[x]))}`,ans,html:`<span>=</span> ${colIn(n)}`,show:()=>vecTxt(ans)}}
+};
+function plot(f){const Sz=160,U=Sz/12,X=x=>Sz/2+x*U,Y=y=>Sz/2-y*U;let g='';
+  for(let i=-5;i<=5;i++){if(!i)continue;g+=`<line x1="${X(i)}" y1="0" x2="${X(i)}" y2="${Sz}"/><line x1="0" y1="${Y(i)}" x2="${Sz}" y2="${Y(i)}"/>`}
+  let d='',pen=false,py=0;for(let j=0;j<=480;j++){const x=-6+12*j/480,y=f(x);if(!isFinite(y)||Math.abs(y)>8){pen=false;continue}if(pen&&Math.abs(y-py)>5)pen=false;d+=(pen?'L':'M')+X(x).toFixed(1)+' '+Y(y).toFixed(1);pen=true;py=y}
+  const nums=[-4,-2,2,4].map(v=>`<text class="g-num" x="${X(v)}" y="${Y(0)+9}" text-anchor="middle">${v<0?MINUS:''}${Math.abs(v)}</text><text class="g-num" x="${X(0)-3}" y="${Y(v)+2.5}" text-anchor="end">${v<0?MINUS:''}${Math.abs(v)}</text>`).join('');
+  return `<svg viewBox="0 0 160 160" aria-hidden="true"><g class="g-grid">${g}</g><g class="g-axis"><line x1="0" y1="80" x2="160" y2="80"/><line x1="80" y1="0" x2="80" y2="160"/></g>${nums}<path class="g-curve" d="${d}"/></svg>`}
+
+const SYM={add:'+',sub:MINUS,mul:'×',div:'÷',roots:'x₁ x₂',vertex:'S(x|y)',line:'y=0',
+ integ:'∫ dx',partial:'∂f/∂x',grad:'∇f',divg:'∇·F',rot:'∇×F',ode:'λ² + pλ',det:'det A',inv:'A⁻¹',matvec:'A·v',
+ graph:'<svg viewBox="0 0 40 30" aria-hidden="true"><path d="M2 15h36M20 2v26" stroke="currentColor" stroke-width="1.5" opacity=".45" fill="none"/><path d="M6 4Q20 40 34 4" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>'};
+
+/* ---------- views ---------- */
+const views=['menu','game','result','stats','settings','drop'];
+function show(v){views.forEach(n=>$('v-'+n).hidden=n!==v);
+  const tabs=v!=='game'&&v!=='drop';$('tabbar').hidden=!tabs;document.body.classList.toggle('tabs',tabs);
+  const cur=v==='result'?'menu':v;document.querySelectorAll('.tab').forEach(b=>b.dataset.tab===cur?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
+  try{window.scrollTo(0,0)}catch(e){}}
+function goTab(v){stop();if(v==='stats')renderStats();else if(v==='settings')renderSettings();else renderMenu();show(v)}
+const mmss=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const durLabel=(dur,endless)=>endless?`${T().endless} · ${mmss(dur)}`:`${dur} ${T().sec}`;
+const coarse=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
+
+function applyI18n(){const t=T();document.documentElement.lang=P.lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t[el.dataset.i18n];if(typeof v==='string')el.textContent=v});
+  $('k-dec').textContent=P.lang==='de'?',':'.';
+  renderMenu(); renderSettings(); if(!$('v-stats').hidden)renderStats(); if($('sec-install'))initInstall(); if(!$('v-result').hidden&&last)renderResult(last);
+  if(!$('v-game').hidden&&G_.q)refreshQLabels();
+  if(!$('v-drop').hidden){renderFns();rebuild();updateBar();renderDropRes()}}
+
+function bestFor(key){const b=S.best[key];return b&&b[P.diff]!=null?b[P.diff]:null}
+function renderSettings(){const t=T();
+  $('seg-lang').innerHTML=[['en','English'],['de','Deutsch']].map(([k,l])=>`<button data-lang="${k}" aria-pressed="${P.lang===k}">${l}</button>`).join('');
+  $('seg-dur').innerHTML=DURS.map(d=>`<button data-dur="${d}" aria-pressed="${P.dur===d}">${d?d+' '+t.sec:t.endless}</button>`).join('');
+  $('seg-diff').innerHTML=DIFFS.map(d=>`<button data-diff="${d}" aria-pressed="${P.diff===d}">${t[d]}</button>`).join('');
+  $('dur-note').textContent=t.durNote;$('diff-note').textContent=t.diffNotes[P.diff];}
+function renderMenu(){const t=T();
+  $('cur').innerHTML=`<span>${t.round}: <strong>${P.dur?P.dur+' '+t.sec:t.endless}</strong></span><span>${t.difficulty}: <strong>${t[P.diff]}</strong></span><button class="linkbtn" data-tab="settings">${t.change}</button>`;
+  const card=k=>{const b=bestFor(k);
+    return `<button class="disc" data-disc="${k}"><span class="sym">${SYM[k]}</span><span class="dname">${t.d[k]}</span><span class="dmeta">${b!=null?t.best+' '+num(b)+' '+t.perMin:S.lv[P.diff].disc[k].n?Math.round(S.lv[P.diff].disc[k].ok/S.lv[P.diff].disc[k].n*100)+' % · '+S.lv[P.diff].disc[k].n+' '+t.answered:t.notPlayed}</span></button>`};
+  $('groups').innerHTML=GROUPS.map(([g,ks])=>`<section class="gsec"><span class="label">${t.g[g]}</span><div class="grid${ks.length%3===0?' g3':''}">${ks.map(card).join('')}</div></section>`).join('');
+  $('chips').innerHTML=GROUPS.map(([g,ks])=>`<div class="cgroup"><button class="glabel" data-group="${g}">${t.g[g]}</button>${ks.map(k=>`<button class="chip" data-chip="${k}" aria-pressed="${P.mix.includes(k)}">${t.d[k]}</button>`).join('')}</div>`).join('');
+  const mb=bestFor('mix');$('mix-best').textContent=mb!=null?`${t.best} ${num(mb)} ${t.perMin}`:'';
+  $('mix-start').disabled=!P.mix.length;
+  const db=S.drop.best[P.diff];$('drop-best').textContent=db!=null?`${t.dBest} (${t[P.diff]}): ${db}`:'';}
+
+/* ---------- game ---------- */
+const G_={};let raf=0,lockT=0,last=null;
+function start(mode,discs){
+  const endless=P.dur===0,now=performance.now();
+  Object.assign(G_,{mode,discs:discs.slice(),dur:P.dur,endless,diff:P.diff,ok:0,n:0,per:{},t0:now,endAt:endless?Infinity:now+P.dur*1000,q:null,locked:false,prevDisc:null,streak:0,maxStreak:0});
+  const t=T();$('score').textContent='0';$('keypad').hidden=true;$('kbd-hint').hidden=coarse;
+  $('bar').hidden=endless;$('streak').hidden=!endless;$('streak').textContent=`${t.streak} 0`;$('bar').classList.remove('low');
+  $('quit').textContent=endless?t.finish:t.quit;$('kbd-hint').textContent=endless?t.hint.replace(t.quit.toLowerCase(),t.finish.toLowerCase()):t.hint;
+  show('game');next();tick();}
+function leaveGame(){if($('v-game').hidden)return;if(G_.endless&&G_.n>0){finish();return}stop();renderMenu();show('menu')}
+function next(){const ds=G_.discs;let d=pick(ds);if(ds.length>1&&d===G_.prevDisc)d=pick(ds);G_.prevDisc=d;
+  let q;for(let i=0;i<5;i++){q=G[d](G_.diff);if(!G_.q||q.prompt!==G_.q.prompt)break}
+  q.disc=d;G_.q=q;G_.locked=false;G_.qStart=performance.now();renderQ(q);}
+function refreshQLabels(){const t=T(),q=G_.q;$('q-tag').textContent=t.d[q.disc];$('q-instr').textContent=t.q[q.disc];$('q-count').textContent=`${t.question} ${G_.n+1}`}
+function renderQ(q){const card=$('qcard');card.classList.remove('ok','bad');$('fb').textContent='';$('fb').className='fb';
+  refreshQLabels();const pe=$('q-prompt');pe.innerHTML=q.prompt;pe.classList.toggle('long',!!q.long);pe.classList.toggle('one',!/class="(mat|pt)"/.test(q.prompt));fitPrompt();const A=$('q-answer');
+  document.querySelectorAll('.kx').forEach(k=>k.hidden=!q.complex);
+  if(q.kind==='choice'){A.innerHTML=`<div class="opts">${q.svgs.map((s,i)=>`<button class="opt" data-opt="${i}" aria-label="${T().graphWord} ${i+1}">${s}<b>${i+1}</b></button>`).join('')}</div>`;
+    $('check').hidden=true;$('keypad').hidden=true;return}
+  $('check').hidden=false;$('keypad').hidden=!coarse;
+  const im=coarse?'none':(q.complex?'text':'decimal');let n=0;
+  const inp=(opt,lbl)=>{const i=n++;return `<input class="in${opt?' opt':''}" id="in${i}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="${im}" enterkeyhint="go" ${opt?'placeholder="1"':''} aria-label="${esc(lbl||T().entry+' '+(i+1))}">`};
+  A.innerHTML=q.html?q.html.replace(/\{in(\?)?\}/g,(_,o)=>inp(!!o))
+    :q.slots.map(l=>`<span class="slot">${l} ${inp(false,l)}</span>`).join('')+(q.tail?`<span>${q.tail}</span>`:'');
+  activeIn=$('in0');activeIn.focus({preventScroll:true});}
+let activeIn=null;
+function fitPrompt(){const el=$('q-prompt');el.style.fontSize='';if(!el.classList.contains('one')||$('v-game').hidden)return;
+  let fs=parseFloat(getComputedStyle(el).fontSize),n=0;while(el.scrollWidth>el.clientWidth+1&&fs>12&&n++<60){fs-=1;el.style.fontSize=fs+'px'}}
+window.addEventListener('resize',()=>{if(G_.q)fitPrompt()});
+try{document.fonts&&document.fonts.ready.then(()=>{if(G_.q)fitPrompt()})}catch(e){}
+function inputs(){return [...document.querySelectorAll('#q-answer .in')]}
+function submit(skip){if(G_.locked||!G_.q)return;const q=G_.q;let ok=false;
+  if(!skip){const ins=inputs();const pf=q.complex?parseC:parse;
+    const vals=ins.map(i=>{const s=i.value.trim();if(!s&&i.classList.contains('opt'))return null;return pf(s)});
+    const bad=vals.findIndex((v,i)=>q.complex?v===null:(v!==null&&isNaN(v))||(v===null&&!ins[i].classList.contains('opt')));
+    if(bad>=0){const el=ins[bad];el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.focus();activeIn=el;return}
+    const e=q.complex?ceq:eq;
+    if(q.check)ok=q.check(vals);
+    else if(!Array.isArray(q.ans))ok=eq(vals[0],q.ans);
+    else if(q.ordered)ok=q.ans.every((a,i)=>e(vals[i],a));
+    else ok=(e(vals[0],q.ans[0])&&e(vals[1],q.ans[1]))||(e(vals[0],q.ans[1])&&e(vals[1],q.ans[0]));}
+  resolve(ok,skip);}
+function choose(i){if(G_.locked||!G_.q||G_.q.kind!=='choice')return;const q=G_.q;const btns=document.querySelectorAll('.opt');
+  btns[q.ans].classList.add('right');if(i!==q.ans)btns[i].classList.add('wrong');resolve(i===q.ans,false);}
+function resolve(ok,skip){const t=T(),q=G_.q;G_.locked=true;const dt=performance.now()-G_.qStart;
+  const p=G_.per[q.disc]||(G_.per[q.disc]={n:0,ok:0,tOk:0});p.n++;G_.n++;
+  if(ok){p.ok++;p.tOk+=dt;G_.ok++;$('score').textContent=G_.ok;G_.streak++;G_.maxStreak=Math.max(G_.maxStreak,G_.streak)}else G_.streak=0;
+  $('streak').textContent=`${t.streak} ${G_.streak}`;
+  $('qcard').classList.add(ok?'ok':'bad');const fb=$('fb');fb.className='fb '+(ok?'ok':'bad');
+  if(ok)fb.textContent=t.correct+' · '+num(dt/1000,1)+' '+t.sec;
+  else{const sol=q.showHtml?q.showHtml():esc(q.kind==='choice'?`${t.graphWord} ${q.ans+1}`:q.show?q.show():num(q.ans));fb.innerHTML=`${skip?t.skipped:t.wrong} <code>${sol}</code>`;
+    if(q.kind==='choice'&&skip){document.querySelectorAll('.opt')[q.ans].classList.add('right')}}
+  clearTimeout(lockT);lockT=setTimeout(()=>{if(!$('v-game').hidden&&performance.now()<G_.endAt)next()},ok?380:(q.kind==='choice'?1300:1500));}
+function tick(){cancelAnimationFrame(raf);const loop=()=>{
+  if(G_.endless){$('secs').textContent=mmss((performance.now()-G_.t0)/1000);raf=requestAnimationFrame(loop);return}
+  const left=Math.max(0,G_.endAt-performance.now());
+  $('bar-i').style.transform=`scaleX(${left/(G_.dur*1000)})`;$('secs').textContent=Math.ceil(left/1000);
+  $('bar').classList.toggle('low',left<10000);if(left<=0){finish();return}raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop)}
+function stop(){cancelAnimationFrame(raf);clearTimeout(lockT);G_.q=null}
+function finish(){const endless=G_.endless;const dur=endless?Math.max(1,Math.round((performance.now()-G_.t0)/1000)):G_.dur;stop();
+  const key=G_.mode;const pace=G_.ok/dur*60;
+  const LV=S.lv[G_.diff];for(const [d,p] of Object.entries(G_.per))for(const s of [S.disc[d],LV.disc[d]]){s.n+=p.n;s.ok+=p.ok;s.tOk+=p.tOk}
+  S.nRounds++;S.secs+=dur;LV.rounds++;LV.secs+=dur;
+  const prev=(S.best[key]||{})[G_.diff];const isBest=!endless&&G_.ok>0&&(prev==null||pace>prev+1e-9);
+  if(isBest){S.best[key]=S.best[key]||{};S.best[key][G_.diff]=Math.round(pace*10)/10}
+  if(endless){S.streak[key]=Math.max(S.streak[key]||0,G_.maxStreak);LV.streak[key]=Math.max(LV.streak[key]||0,G_.maxStreak)}
+  S.rounds.unshift({t:Date.now(),mode:key,discs:G_.discs,dur,endless,diff:G_.diff,ok:G_.ok,n:G_.n});S.rounds=S.rounds.slice(0,40);persist();
+  last={mode:key,discs:G_.discs,dur,endless,maxStreak:G_.maxStreak,diff:G_.diff,ok:G_.ok,n:G_.n,per:JSON.parse(JSON.stringify(G_.per)),pace,isBest};
+  renderResult(last);show('result');$('again').focus({preventScroll:true});}
+function renderResult(r){const t=T();$('r-mode').textContent=`${t.d[r.mode]} · ${durLabel(r.dur,r.endless)} · ${t[r.diff]}`;
+  $('r-score').textContent=r.ok;$('r-sub').textContent=`${t.correctCol}: ${r.ok} ${t.of} ${r.n} ${t.answered}`;$('r-best').hidden=!r.isBest;
+  const tOk=Object.values(r.per).reduce((a,p)=>a+p.tOk,0);
+  $('r-kpis').innerHTML=kpis([[t.accuracy,r.n?Math.round(r.ok/r.n*100)+' %':'–'],[t.avgTime,r.ok?num(tOk/r.ok/1000,1)+' '+t.sec:'–'],[t.pace,num(Math.round(r.pace*10)/10)],r.endless?[t.bestStreak,r.maxStreak]:[t.questions,r.n]]);
+  const rows=DISC.filter(d=>r.per[d]).map(d=>{const p=r.per[d];return [t.d[d],p.n,p.ok,p.n?Math.round(p.ok/p.n*100):0,p.ok?p.tOk/p.ok:null]});
+  $('r-table').innerHTML=rows.length?table([t.discipline,t.questions,t.correctCol,t.accuracy,t.avgTime],rows.map(x=>[esc(x[0]),x[1],x[2],accCell(x[3]),x[4]!=null?num(x[4]/1000,1)+' '+t.sec:'–'])):'';}
+const kpis=a=>a.map(([l,v])=>`<div class="kpi"><span class="label">${esc(l)}</span><strong>${v}</strong></div>`).join('');
+const accCell=p=>`<span class="acc"><span class="track"><i style="width:${p}%"></i></span>${p} %</span>`;
+function table(h,rows){return `<table><thead><tr>${h.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>r.grp?`<tr class="grp"><td colspan="${h.length}">${esc(r.grp)}</td></tr>`:`<tr>${r.map((c,i)=>`<td${c==='–'&&i?' class="dim"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
+
+function renderStats(){const t=T();const sel=P.statsLv||P.diff;const all=sel==='all';
+  $('seg-slv').innerHTML=[...DIFFS,'all'].map(d=>`<button data-slv="${d}" aria-pressed="${sel===d}">${d==='all'?t.allLevels:t[d]}</button>`).join('');
+  const src=all?S.disc:S.lv[sel].disc;const rounds=all?S.rounds:S.rounds.filter(x=>x.diff===sel);
+  const nR=all?S.nRounds:S.lv[sel].rounds,secs=all?S.secs:S.lv[sel].secs;
+  const tot=DISC.reduce((a,d)=>{a.n+=src[d].n;a.ok+=src[d].ok;return a},{n:0,ok:0});
+  $('s-kpis').innerHTML=kpis([[t.rounds,nR],[t.totalQ,tot.n],[t.totalAcc,tot.n?Math.round(tot.ok/tot.n*100)+' %':'–'],[t.totalTime,secs>=60?Math.round(secs/60)+' '+t.min:secs+' '+t.sec]]);
+  const best=k=>{const b=S.best[k]||{};if(!all)return b[sel];const v=DIFFS.map(df=>b[df]).filter(x=>x!=null);return v.length?Math.max(...v):null};
+  const st=k=>(all?S.streak[k]:S.lv[sel].streak[k])||'–';
+  const keys=[...GROUPS.flatMap(([g,ks])=>[{grp:t.g[g]},...ks]),{grp:t.d.mix},'mix'];
+  $('s-table').innerHTML=table(['',t.th.n,t.th.acc,t.th.time,t.th.pace,t.th.streak],keys.map(d=>{
+    if(typeof d==='object')return d;const b=best(d);if(d==='mix')return [esc(t.ds.mix),'–','–','–',b!=null?num(b):'–',st(d)];
+    const s=src[d];const acc=s.n?Math.round(s.ok/s.n*100):null;
+    return [esc(t.ds[d]),s.n||'–',acc!=null?accCell(acc):'–',s.ok?num(s.tOk/s.ok/1000,1)+' '+t.sec:'–',b!=null?num(b):'–',st(d)]}));
+  $('s-note').textContent=(all?t.noteAll:t.noteLv.replace('{lv}',t[sel]))+(S.legacy&&!all?' '+t.legacyNote:'');
+  const dd=all?S.drop:S.drop.lv[sel];const db=all?(()=>{const v=DIFFS.map(df=>S.drop.best[df]).filter(x=>x!=null);return v.length?Math.max(...v):null})():S.drop.best[sel];
+  $('s-drop').innerHTML=kpis([[t.dRuns,dd.runs],[t.dCoins,dd.coins],[t.dPerfect,dd.perfect],[t.dBest,db!=null?db:'–']]);
+  const fmtD=ts=>new Date(ts).toLocaleString(P.lang==='de'?'de-DE':'en-US',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  $('s-rounds').innerHTML=rounds.length?rounds.slice(0,10).map(r=>`<div class="rnd"><div><div>${esc(t.d[r.mode]||r.mode)} <span class="small">· ${durLabel(r.dur,r.endless)}${all?' · '+t[r.diff]:''}</span></div><div class="when">${fmtD(r.t)}</div></div><span class="s">${r.ok}</span><span class="a">${r.n?Math.round(r.ok/r.n*100):0} %</span></div>`).join(''):`<p class="small" style="margin:0">${t.noRounds}</p>`;
+  $('reset-confirm').hidden=true;$('reset').hidden=false;}
+
+/* ---------- Coin Drop: expression parser ---------- */
+const FNS={sqrt:Math.sqrt,sin:Math.sin,cos:Math.cos,tan:Math.tan,abs:Math.abs,exp:Math.exp,ln:Math.log,log:Math.log10};
+const NAMES=['sqrt','sin','cos','tan','abs','exp','ln','log','pi','e','x'];
+function compileFn(src){
+  const s=String(src).toLowerCase().replace(/\s+/g,'').replace(/,/g,'.').replace(/[−–]/g,'-').replace(/[·×]/g,'*').replace(/÷/g,'/')
+    .replace(/²/g,'^2').replace(/³/g,'^3').replace(/π/g,'pi').replace(/\*\*/g,'^');
+  if(!s)return null;
+  const tk=[];let i=0;
+  const endsOp=()=>{const l=tk[tk.length-1];return l&&(l.t==='n'||l.t==='x'||l.t==='c'||l.t===')')};
+  const push=t=>{if(['n','x','c','f','('].includes(t.t)&&endsOp())tk.push({t:'*'});tk.push(t)};
+  while(i<s.length){const ch=s[i];
+    if(/[0-9.]/.test(ch)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;const v=Number(s.slice(i,j));if(isNaN(v))throw 0;push({t:'n',v});i=j;continue}
+    if(/[a-z]/.test(ch)){const nm=NAMES.find(n=>s.startsWith(n,i));if(!nm)throw 0;
+      if(nm==='x')push({t:'x'});else if(nm==='pi')push({t:'c',v:Math.PI});else if(nm==='e')push({t:'c',v:Math.E});else push({t:'f',f:FNS[nm]});i+=nm.length;continue}
+    if('+-*/^()'.includes(ch)){if(ch==='(')push({t:'('});else tk.push({t:ch});i++;continue}
+    throw 0}
+  let p=0;const peek=()=>tk[p]&&tk[p].t,eat=t=>{if(peek()!==t)throw 0;p++};
+  function expr(){let a=term();while(peek()==='+'||peek()==='-'){const o=tk[p++].t,b=term(),l=a;a=o==='+'?x=>l(x)+b(x):x=>l(x)-b(x)}return a}
+  function term(){let a=unary();while(peek()==='*'||peek()==='/'){const o=tk[p++].t,b=unary(),l=a;a=o==='*'?x=>l(x)*b(x):x=>l(x)/b(x)}return a}
+  function unary(){if(peek()==='-'){p++;const a=unary();return x=>-a(x)}if(peek()==='+'){p++;return unary()}return power()}
+  function power(){const a=atom();if(peek()==='^'){p++;const b=unary();return x=>Math.pow(a(x),b(x))}return a}
+  function atom(){const t=tk[p];if(!t)throw 0;
+    if(t.t==='n'||t.t==='c'){p++;const v=t.v;return ()=>v}
+    if(t.t==='x'){p++;return x=>x}
+    if(t.t==='f'){p++;const a=power();const f=t.f;return x=>f(a(x))}
+    if(t.t==='('){p++;const a=expr();eat(')');return a}
+    throw 0}
+  const f=expr();if(p!==tk.length)throw 0;
+  let okPts=0;for(const x of [-7.3,-2.1,0.37,3.9,8.6]){const y=f(x);if(typeof y!=='number')throw 0;if(isFinite(y))okPts++}
+  if(!okPts)throw 0;return f}
+
+/* ---------- Coin Drop: game ---------- */
+const DW=10,GRAV=-22,BR=0.36,CR=0.5,MAXF=6,SUBN='₀₁₂₃₄₅₆₇₈₉';
+const D_={lvl:null,levelNo:0,fns:[],lines:[],segs:[],balls:[],state:'edit',raf:0,hover:null,t:0,res:null};
+const rampItem=r=>({fn:x=>r.m*x+r.b,a:r.a,b:r.e,ci:0});
+function newBall(x,delay){return {x,y:DW-0.6,vx:0,vy:0,delay,on:delay<=0,out:false,rest:false,still:0,trail:[]}}
+function simulate(x0,segs,coins){const b=newBall(x0,0),traj=[],h=1/240;let t=0,n=0;
+  while(t<20&&!b.out&&!b.rest){t+=h;stepBall(b,segs,h,coins,t);if(n++%4===0)traj.push([b.x,b.y])}return traj}
+function genLevel(d){const nr=d==='easy'?1:d==='normal'?2:3,nc=d==='easy'?3:d==='normal'?4:5;
+  for(let att=0;att<400;att++){const x0=R(-6,6);let dir=x0===0?pick([1,-1]):(x0>0?-1:1);if(Math.random()<.25)dir=-dir;
+    const ramps=[];let ax=x0,ay=R(2,5),ok=true;
+    for(let r=0;r<nr;r++){const m=-dir*pick([0.25,0.35,0.5,0.6,0.75]),len=R(4,7);
+      const x1=Math.max(-9.5,dir>0?ax-1:ax-len),x2=Math.min(9.5,dir>0?ax+len:ax+1);if(x2-x1<3){ok=false;break}
+      const bb=ay-m*ax;ramps.push({m,b:bb,a:x1,e:x2});
+      if(r<nr-1){const traj=simulate(x0,makeGeo(ramps.map(rampItem)).segs,[]);const endX=dir>0?x2:x1,endY=m*endX+bb,drop=R(2,4);
+        const pt=traj.find(q=>(dir>0?q[0]>endX+0.3:q[0]<endX-0.3)&&q[1]<endY-drop);
+        if(!pt||pt[1]<-5.5||Math.abs(pt[0])>8){ok=false;break}ax=pt[0];ay=pt[1]-0.3;dir=-dir}}
+    if(!ok)continue;
+    const segs=makeGeo(ramps.map(rampItem)).segs;const traj=simulate(x0,segs,[]);
+    const cand=traj.filter(q=>q[1]<DW-3&&q[1]>-9&&Math.abs(q[0])<9.5&&Math.abs(q[0]-x0)>1.3);if(cand.length<nc*6)continue;
+    const cum=[0];for(let i=1;i<cand.length;i++)cum.push(cum[i-1]+Math.min(1,Math.hypot(cand[i][0]-cand[i-1][0],cand[i][1]-cand[i-1][1])));
+    const L=cum[cum.length-1];const coins=[];
+    for(let k=0;k<nc;k++){const tg=L*(k+0.5)/nc;const q=cand[Math.max(0,cum.findIndex(c=>c>=tg))];
+      const c={x:Math.round(q[0]*2)/2,y:Math.round(q[1]*2)/2};if(coins.some(o=>Math.hypot(o.x-c.x,o.y-c.y)<2))continue;coins.push(c)}
+    if(coins.length<nc)continue;
+    const test=coins.map(c=>({x:c.x,y:c.y}));simulate(x0,segs,test);if(!test.every(c=>c.got))continue;
+    return {spawns:[x0],coins,par:ramps.length,diff:d,ref:ramps}}
+  return null}
+function newLevel(){const d=P.diff;let lvl=genLevel(d);
+  if(!lvl){const x0=R(-5,5),coins=[];while(coins.length<3){const x=x0+pick([-4,-3,3,4]),y=R(-6,2);if(!coins.some(c=>Math.hypot(c.x-x,c.y-y)<2))coins.push({x,y})}lvl={spawns:[x0],coins,par:null,diff:d}}
+  D_.lvl=lvl;D_.levelNo++;D_.fns=[{src:'',a:'',b:''}];resetRun();renderFns();rebuild();}
+function resetRun(){cancelAnimationFrame(D_.raf);D_.state='edit';D_.balls=[];D_.res=null;
+  if(D_.lvl)D_.lvl.coins.forEach(c=>{c.got=false;c.gt=0});$('d-res').hidden=true;setEditing(true);updateBar();draw();}
+function setEditing(on){document.querySelectorAll('#d-fns input,#d-fns button,#d-add').forEach(el=>el.disabled=!on);
+  $('d-start').textContent=on||D_.state!=='run'?T().dropGo:T().dropStop;$('d-new').disabled=D_.state==='run';}
+function domainOf(f){const a=f.a.trim()?parse(f.a):-DW-0.5,b=f.b.trim()?parse(f.b):DW+0.5;return [a,b]}
+function checkFn(f){f.err='';f.fn=null;if(!f.src.trim())return;
+  try{f.fn=compileFn(f.src)}catch(e){f.err=T().errSyntax;return}
+  const [a,b]=domainOf(f);if(isNaN(a)||isNaN(b)){f.err=T().errSyntax;f.fn=null;return}if(a>=b){f.err=T().errDomain;f.fn=null}}
+function makeGeo(items){const lines=[],segs=[];
+  items.forEach(it=>{const a=Math.max(it.a,-DW-0.5),b=Math.min(it.b,DW+0.5);if(a>=b)return;
+    const N=Math.max(8,Math.ceil((b-a)*40));let cur=null;const close=()=>{if(cur&&cur.pts.length>1)lines.push(cur);cur=null};
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N;let y;try{y=it.fn(x)}catch(e){y=NaN}
+      if(!isFinite(y)||Math.abs(y)>40){close();continue}
+      if(cur&&Math.abs(y-cur.pts[cur.pts.length-1][1])>4)close();
+      if(!cur)cur={ci:it.ci,pts:[]};cur.pts.push([x,y])}
+    close()});
+  for(const l of lines)for(let i=1;i<l.pts.length;i++){const [x1,y1]=l.pts[i-1],[x2,y2]=l.pts[i];
+    segs.push({x1,y1,x2,y2,minx:Math.min(x1,x2)-BR,maxx:Math.max(x1,x2)+BR,miny:Math.min(y1,y2)-BR,maxy:Math.max(y1,y2)+BR})}
+  return {lines,segs}}
+function rebuild(){const items=[];D_.fns.forEach((f,ci)=>{checkFn(f);if(!f.fn)return;const [a,b]=domainOf(f);items.push({fn:f.fn,a,b,ci})});
+  const g=makeGeo(items);D_.lines=g.lines;D_.segs=g.segs;
+  D_.fns.forEach((f,i)=>{const row=document.querySelector(`.fn[data-i="${i}"]`);if(!row)return;row.classList.toggle('err',!!f.err);row.querySelector('.ferr').textContent=f.err;row.querySelector('.ferr').hidden=!f.err});
+  updateCost();draw();}
+const usedFns=()=>D_.fns.filter(f=>f.fn).length;
+function updateCost(){const t=T(),n=D_.lvl&&D_.lvl.par;$('d-cost').textContent=(n?(n===1?t.par1:t.parN.replace('{n}',n))+' · ':'')+t.costNote;}
+function updateBar(){const t=T();if(!D_.lvl)return;const got=D_.lvl.coins.filter(c=>c.got).length;
+  $('d-title').innerHTML=`${t.dropTitle} · ${t.dLevel} <b>${D_.levelNo}</b> · ${t[D_.lvl.diff]}`;$('d-coins').textContent=`${got}/${D_.lvl.coins.length}`}
+function renderFns(){const t=T();
+  $('d-fns').innerHTML=D_.fns.map((f,i)=>`<div class="fn" data-i="${i}"><span class="dot" style="background:var(--cv${i+1})"></span>
+    <label class="fnl" for="fe${i}">f${SUBN[i+1]}(x) =</label>
+    <input class="fexpr" id="fe${i}" data-f="src" value="${esc(f.src).replace(/"/g,'&quot;')}" placeholder="${i===0?'0.5x^2 - 3':''}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+    <button class="fdel" data-fdel="${i}" aria-label="Remove f${i+1}">×</button>
+    <div class="fdomrow"><span>${t.xFrom}</span><input class="fdom" id="fa${i}" data-f="a" value="${esc(f.a)}" placeholder="-10" type="number" step="any" autocomplete="off"><span>${t.xTo}</span><input class="fdom" id="fb${i}" data-f="b" value="${esc(f.b)}" placeholder="10" type="number" step="any" autocomplete="off"></div>
+    <div class="ferr" hidden></div></div>`).join('');
+  $('d-help').innerHTML=t.dHelp;$('d-add').hidden=D_.fns.length>=MAXF;setEditing(D_.state!=='run');}
+function openDrop(){stop();if(!D_.lvl||D_.lvl.diff!==P.diff)newLevel();else{renderFns();rebuild();resetRun()}show('drop');updateBar();sizeCanvas();}
+function startRun(){if(D_.state==='run'){finishRun();return}
+  if(D_.state==='done')resetRun();rebuild();
+  if(D_.fns.some(f=>f.err)){$('d-warn').textContent=T().fixFns;$('d-warn').hidden=false;return}$('d-warn').hidden=true;
+  const x0=D_.lvl.spawns[0];D_.balls=[0,-0.15,0.15].map((o,i)=>newBall(x0+o,i*0.7));
+  D_.state='run';D_.t=0;setEditing(false);let last=performance.now(),acc=0;const h=1/240;
+  const loop=now=>{let dt=Math.min(0.05,(now-last)/1000);last=now;acc+=dt;while(acc>=h){physics(h);acc-=h}draw();updateBar();
+    const done=D_.balls.every(b=>b.out||b.rest)||D_.t>25;if(done){finishRun();return}D_.raf=requestAnimationFrame(loop)};
+  D_.raf=requestAnimationFrame(loop);}
+function stepBall(b,segs,h,coins,t){if(b.out||b.rest)return;if(!b.on){if(t>=b.delay)b.on=true;else return}
+  b.vy+=GRAV*h;b.x+=b.vx*h;b.y+=b.vy*h;
+  for(const s of segs){if(b.x<s.minx||b.x>s.maxx||b.y<s.miny||b.y>s.maxy)continue;
+    const dx=s.x2-s.x1,dy=s.y2-s.y1,L2=dx*dx+dy*dy;let u=L2?((b.x-s.x1)*dx+(b.y-s.y1)*dy)/L2:0;u=Math.max(0,Math.min(1,u));
+    const cx=s.x1+u*dx,cy=s.y1+u*dy;let nx=b.x-cx,ny=b.y-cy;const d=Math.hypot(nx,ny);if(d>=BR||d<1e-9)continue;
+    nx/=d;ny/=d;b.x+=nx*(BR-d);b.y+=ny*(BR-d);const vn=b.vx*nx+b.vy*ny;
+    if(vn<0){b.vx-=1.3*vn*nx;b.vy-=1.3*vn*ny}
+    const tx=-ny,ty=nx,vt=b.vx*tx+b.vy*ty,vn2=b.vx*nx+b.vy*ny,k=1-0.35*h;b.vx=vt*k*tx+vn2*nx;b.vy=vt*k*ty+vn2*ny}
+  const sp=Math.hypot(b.vx,b.vy);if(sp>32){b.vx*=32/sp;b.vy*=32/sp}
+  for(const c of coins)if(!c.got&&Math.hypot(c.x-b.x,c.y-b.y)<BR+CR){c.got=true;c.gt=t}
+  if(b.y<-DW-1||b.x<-DW-1||b.x>DW+1)b.out=true;
+  if(sp<0.08){b.still+=h;if(b.still>1.2)b.rest=true}else b.still=0;
+  if(!b.tc||t-b.tc>0.03){b.trail.push([b.x,b.y]);if(b.trail.length>36)b.trail.shift();b.tc=t}}
+function physics(h){D_.t+=h;for(const b of D_.balls)stepBall(b,D_.segs,h,D_.lvl.coins,D_.t)}
+function finishRun(){cancelAnimationFrame(D_.raf);D_.state='done';const t=T();
+  const coins=D_.lvl.coins.filter(c=>c.got).length,all=coins===D_.lvl.coins.length,nf=usedFns();
+  const score=Math.max(0,coins*100+(all?200:0)-nf*50);const dS=S.drop;for(const o of [dS,dS.lv[D_.lvl.diff]]){o.runs++;o.coins+=coins;if(all)o.perfect++}
+  const prev=dS.best[D_.lvl.diff];const isBest=score>0&&(prev==null||score>prev);if(isBest)dS.best[D_.lvl.diff]=score;persist();
+  D_.res={coins,all,nf,score,isBest,total:D_.lvl.coins.length};renderDropRes();setEditing(true);updateBar();draw();}
+function renderDropRes(){const r=D_.res,t=T();if(!r){$('d-res').hidden=true;return}
+  $('d-res').innerHTML=`<div class="row" style="justify-content:space-between;align-items:baseline"><h2>${r.all?t.perfect:t.scoreLbl+': '+r.score}</h2>${r.isBest?`<span class="badge">${t.newBest}</span>`:''}</div>
+    <div class="lines"><span>${t.coinsLbl} ${r.coins}/${r.total}</span><span>+${r.coins*100}</span>
+    <span>${t.allBonus}</span><span>${r.all?'+200':'0'}</span>
+    <span>${t.fnsLbl} ${r.nf}</span><span>${r.nf?MINUS+r.nf*50:'0'}</span>
+    <span class="tot">${t.scoreLbl}</span><span class="tot">${r.score}</span></div>
+    <div class="row"><button class="cta" id="d-next">${t.nextLevel}</button><button class="ghost" id="d-retry">${t.tryAgain}</button><button class="ghost" id="d-home">${t.mainMenu}</button></div>`;
+  $('d-res').hidden=false;}
+
+/* drawing */
+let dctx=null,dS=0;
+function sizeCanvas(){const c=$('d-canvas');if(!c||$('v-drop').hidden)return;const w=c.clientWidth;if(!w)return;const dpr=Math.min(3,window.devicePixelRatio||1);
+  c.width=Math.round(w*dpr);c.height=Math.round(w*dpr);dctx=c.getContext('2d');dctx.setTransform(dpr,0,0,dpr,0,0);dS=w;draw()}
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function draw(){if(!dctx||!D_.lvl||$('v-drop').hidden)return;const g=dctx,S0=dS,U=S0/(2*DW),X=x=>(x+DW)*U,Y=y=>(DW-y)*U;
+  const col={bg:cssv('--surface'),line:cssv('--line'),muted:cssv('--muted'),ink:cssv('--ink'),coin:cssv('--coin'),edge:cssv('--coin-edge'),acc:cssv('--accent')};
+  g.clearRect(0,0,S0,S0);g.fillStyle=col.bg;g.fillRect(0,0,S0,S0);
+  g.lineWidth=1;g.strokeStyle=col.line;g.beginPath();for(let i=-DW+1;i<DW;i++){if(!i)continue;g.moveTo(X(i)+.5,0);g.lineTo(X(i)+.5,S0);g.moveTo(0,Y(i)+.5);g.lineTo(S0,Y(i)+.5)}g.stroke();
+  g.strokeStyle=col.muted;g.lineWidth=1.4;g.beginPath();g.moveTo(X(0),0);g.lineTo(X(0),S0);g.moveTo(0,Y(0));g.lineTo(S0,Y(0));g.stroke();
+  g.fillStyle=col.muted;g.font=`600 ${Math.max(9,S0/48)}px ${cssv('--f-mono')||'monospace'}`;g.textAlign='center';g.textBaseline='top';
+  for(const v of [-8,-6,-4,-2,2,4,6,8]){g.fillText((v<0?MINUS:'')+Math.abs(v),X(v),Y(0)+3)}g.textAlign='right';g.textBaseline='middle';
+  for(const v of [-8,-6,-4,-2,2,4,6,8]){g.fillText((v<0?MINUS:'')+Math.abs(v),X(0)-4,Y(v))}
+  // drop guides
+  if(D_.state==='edit'){g.setLineDash([4,5]);g.strokeStyle=col.muted;g.globalAlpha=.55;g.lineWidth=1.2;g.beginPath();for(const sx of D_.lvl.spawns){g.moveTo(X(sx),Y(DW-0.6));g.lineTo(X(sx),S0)}g.stroke();g.setLineDash([]);g.globalAlpha=1}
+  // curves
+  g.lineCap='round';g.lineJoin='round';g.lineWidth=Math.max(3,S0/130);
+  for(const l of D_.lines){g.strokeStyle=cssv('--cv'+(l.ci+1));g.beginPath();l.pts.forEach(([x,y],i)=>i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)));g.stroke()}
+  // coins
+  const cr=CR*U;for(const c of D_.lvl.coins){let sc=1,al=1;if(c.got){const k=Math.min(1,(D_.t-c.gt)/0.35);sc=1+k*0.8;al=1-k;if(al<=0)continue}
+    g.globalAlpha=al;g.fillStyle=col.coin;g.strokeStyle=col.edge;g.lineWidth=2;g.beginPath();g.arc(X(c.x),Y(c.y),cr*sc,0,7);g.fill();g.stroke();
+    g.beginPath();g.arc(X(c.x),Y(c.y),cr*sc*0.55,0,7);g.lineWidth=1.3;g.stroke();g.globalAlpha=1}
+  // spawn markers
+  g.fillStyle=col.ink;for(const sx of D_.lvl.spawns){g.beginPath();g.moveTo(X(sx)-7,2);g.lineTo(X(sx)+7,2);g.lineTo(X(sx),11);g.closePath();g.fill()}
+  g.font=`700 ${Math.max(10,S0/40)}px ${cssv('--f-mono')||'monospace'}`;g.textAlign='left';g.textBaseline='top';for(const sx of D_.lvl.spawns){const lb='x = '+num(sx);const tw=g.measureText(lb).width;g.fillText(lb,X(sx)+tw+16>S0?X(sx)-tw-12:X(sx)+10,3)}
+  // balls
+  const br=BR*U;const balls=D_.balls.length?D_.balls:D_.lvl.spawns.map(sx=>({x:sx,y:DW-0.6,trail:[],on:true}));
+  for(const b of balls){if(b.out)continue;
+    if(b.trail.length>1){g.strokeStyle=col.ink;g.lineWidth=br*0.9;for(let i=1;i<b.trail.length;i++){g.globalAlpha=i/b.trail.length*0.25;g.beginPath();g.moveTo(X(b.trail[i-1][0]),Y(b.trail[i-1][1]));g.lineTo(X(b.trail[i][0]),Y(b.trail[i][1]));g.stroke()}g.globalAlpha=1}
+    g.fillStyle=col.ink;g.globalAlpha=b.on?1:.45;g.beginPath();g.arc(X(b.x),Y(b.y),br,0,7);g.fill();g.globalAlpha=1;
+    g.fillStyle=col.acc;g.beginPath();g.arc(X(b.x)-br*.3,Y(b.y)-br*.3,br*.28,0,7);g.fill()}
+  // crosshair
+  if(D_.hover&&D_.state!=='run'){const [hx,hy]=D_.hover;g.strokeStyle=col.ink;g.globalAlpha=.5;g.setLineDash([3,4]);g.lineWidth=1;g.beginPath();
+    g.moveTo(X(hx),0);g.lineTo(X(hx),S0);g.moveTo(0,Y(hy));g.lineTo(S0,Y(hy));g.stroke();g.setLineDash([]);g.globalAlpha=1;
+    const lbl=`(${num(hx)} | ${num(hy)})`;g.font=`700 ${Math.max(11,S0/36)}px ${cssv('--f-mono')||'monospace'}`;const tw=g.measureText(lbl).width;
+    let lx=X(hx)+10,ly=Y(hy)-22;if(lx+tw+10>S0)lx=X(hx)-tw-20;if(ly<4)ly=Y(hy)+10;
+    g.fillStyle=col.bg;g.strokeStyle=col.line;g.lineWidth=1;g.beginPath();g.rect(lx,ly,tw+10,20);g.fill();g.stroke();g.fillStyle=col.ink;g.textAlign='left';g.textBaseline='middle';g.fillText(lbl,lx+5,ly+10)}}
+function canvasPt(e){const c=$('d-canvas'),r=c.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*2*DW-DW,y=DW-(e.clientY-r.top)/r.height*2*DW;
+  return [Math.round(x*2)/2,Math.round(y*2)/2]}
+(function(){const c=$('d-canvas');
+  c.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons){D_.hover=canvasPt(e);if(D_.state!=='run')draw()}});
+  c.addEventListener('pointerdown',e=>{D_.hover=canvasPt(e);if(D_.state!=='run')draw()});
+  c.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){D_.hover=null;if(D_.state!=='run')draw()}});
+  if(window.ResizeObserver)new ResizeObserver(()=>sizeCanvas()).observe(c);else window.addEventListener('resize',sizeCanvas);
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>draw());
+  $('d-fns').addEventListener('input',e=>{const el=e.target,row=el.closest('.fn');if(!row||!el.dataset.f)return;D_.fns[+row.dataset.i][el.dataset.f]=el.value;
+    if(D_.state==='done'){D_.state='edit';D_.res=null;$('d-res').hidden=true;D_.balls=[];D_.lvl.coins.forEach(c=>c.got=false);updateBar()}rebuild()});
+})();
+function dropClick(id,b){
+  if(b.dataset.fdel!=null){const i=+b.dataset.fdel;D_.fns.splice(i,1);if(!D_.fns.length)D_.fns.push({src:'',a:'',b:''});renderFns();rebuild();return true}
+  switch(id){
+    case 'drop-open':openDrop();return true;
+    case 'd-back':case 'd-home':resetRun();renderMenu();show('menu');return true;
+    case 'd-start':startRun();return true;
+    case 'd-reset':resetRun();return true;
+    case 'd-new':case 'd-next':newLevel();updateBar();return true;
+    case 'd-retry':resetRun();return true;
+    case 'd-add':if(D_.fns.length<MAXF){D_.fns.push({src:'',a:'',b:''});renderFns();rebuild();const n=$('fe'+(D_.fns.length-1));n&&n.focus()}else{$('d-warn').textContent=T().maxFns;$('d-warn').hidden=false}return true}
+  return false}
+
+
+/* ---------- install & backup ---------- */
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('btn-install').hidden=false});
+window.addEventListener('appinstalled',()=>{installEvt=null;$('btn-install').hidden=true;initInstall()});
+function initInstall(){const has=!!document.querySelector('link[rel="manifest"]');$('sec-install').hidden=!has;if(!has)return;
+  const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  $('ios-hint').hidden=!(ios&&!standalone);$('inst-state').textContent=standalone?T().installed:'';
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}}
+const dmsg=(txt,bad)=>{const m=$('data-msg');m.textContent=txt;m.style.color=bad?'var(--bad)':''};
+async function exportStats(){const data=JSON.stringify({app:'blitzrechnen',v:1,exported:new Date().toISOString(),stats:S,prefs:P});
+  const name=`blitzrechnen-backup-${new Date().toISOString().slice(0,10)}.json`;
+  if(coarse&&window.File&&navigator.canShare){try{const f=new File([data],name,{type:'application/json'});if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title:name});dmsg(T().exported);return}}catch(e){if(e&&e.name==='AbortError')return}}
+  const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);dmsg(T().exported)}
+$('file-import').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const o=JSON.parse(rd.result);if(!o||o.app!=='blitzrechnen'||!o.stats||o.stats.v!==1)throw 0;
+      S=o.stats;ensureS();
+      if(o.prefs)P=Object.assign(P,o.prefs);persist();applyI18n();renderSettings();dmsg(T().imported.replace('{n}',S.nRounds))}
+    catch(err){dmsg(T().importErr,true)}e.target.value=''};rd.readAsText(f)});
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(dropClick(b.id,b))return;
+  if(b.dataset.lang){P.lang=b.dataset.lang;persist();applyI18n();return}
+  if(b.dataset.tab){goTab(b.dataset.tab);return}
+  if(b.dataset.slv){P.statsLv=b.dataset.slv;persist();renderStats();return}
+  if(b.dataset.dur){P.dur=+b.dataset.dur;persist();renderSettings();renderMenu();return}
+  if(b.dataset.diff){P.diff=b.dataset.diff;persist();renderSettings();renderMenu();return}
+  if(b.dataset.disc){start(b.dataset.disc,[b.dataset.disc]);return}
+  if(b.dataset.group){const ks=GROUPS.find(g=>g[0]===b.dataset.group)[1];const allOn=ks.every(k=>P.mix.includes(k));
+    P.mix=DISC.filter(k=>ks.includes(k)?!allOn:P.mix.includes(k));persist();renderMenu();$('mix-warn').hidden=!!P.mix.length;return}
+  if(b.dataset.chip){const k=b.dataset.chip;P.mix=P.mix.includes(k)?P.mix.filter(x=>x!==k):DISC.filter(x=>x===k||P.mix.includes(x));persist();renderMenu();$('mix-warn').hidden=!!P.mix.length;return}
+  if(b.dataset.opt!=null){choose(+b.dataset.opt);return}
+  switch(b.id){
+    case 'home':case 'stats-back':case 'to-menu':stop();renderMenu();show('menu');break;
+    case 'btn-stats':case 'to-stats':stop();renderStats();show('stats');break;
+    case 'mix-start':if(!P.mix.length){$('mix-warn').hidden=false;break}start('mix',P.mix);break;
+    case 'mix-all':P.mix=DISC.slice();persist();renderMenu();$('mix-warn').hidden=true;break;
+    case 'quit':leaveGame();break;
+    case 'check':submit(false);break;
+    case 'skip':if(G_.q&&G_.q.kind==='choice'&&!G_.locked){document.querySelectorAll('.opt')[G_.q.ans].classList.add('right')}submit(true);break;
+    case 'again':start(last.mode,last.discs);break;
+    case 'btn-export':exportStats();break;
+    case 'btn-import':$('file-import').click();break;
+    case 'btn-install':if(installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;$('btn-install').hidden=true})}break;
+    case 'reset':$('reset').hidden=true;$('reset-confirm').hidden=false;break;
+    case 'reset-no':$('reset').hidden=false;$('reset-confirm').hidden=true;break;
+    case 'reset-yes':S=fresh();ensureS();persist();renderStats();renderMenu();break;
+  }});
+document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('in'))activeIn=e.target});
+document.addEventListener('keydown',e=>{if($('v-game').hidden)return;
+  if(e.key==='Escape'){leaveGame();return}
+  if(!G_.q)return;
+  if(G_.q.kind==='choice'){const m={'1':0,'2':1,'3':2,'a':0,'b':1,'c':2}[e.key.toLowerCase()];if(m!=null){e.preventDefault();choose(m)}return}
+  if(e.key==='Enter'){e.preventDefault();const ins=inputs();const empty=ins.find(i=>!i.value.trim()&&!i.classList.contains('opt'));if(empty&&!G_.locked){empty.focus();return}submit(false);return}
+  if(e.key===' '&&!G_.q.complex&&e.target.classList.contains('in')){e.preventDefault();const ins=inputs();const i=ins.indexOf(e.target);if(ins[i+1])ins[i+1].focus()}});
+const kp=$('keypad');
+kp.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault()});
+kp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!G_.q||G_.locked)return;const ins=inputs();const el=activeIn&&ins.includes(activeIn)?activeIn:ins[0];if(!el)return;const k=b.dataset.k;
+  if(/^\d$/.test(k)||k==='/'||k==='+'||k==='i')el.value+=k;
+  else if(k==='-')el.value+=MINUS;
+  else if(k==='del')el.value=el.value.slice(0,-1);
+  else if(k==='neg')el.value=el.value.startsWith('-')||el.value.startsWith(MINUS)?el.value.slice(1):'-'+el.value;
+  else if(k==='dec'){if(!/[.,]/.test(el.value))el.value+=(P.lang==='de'?',':'.')}
+  else if(k==='next'){const i=ins.indexOf(el);activeIn=ins[(i+1)%ins.length];activeIn.focus({preventScroll:true})}
+  else if(k==='go'){const empty=ins.find(i=>!i.value.trim()&&!i.classList.contains('opt'));if(empty&&empty!==el){activeIn=empty;empty.focus({preventScroll:true});return}submit(false)}});
+document.addEventListener('visibilitychange',()=>{});
+
+applyI18n();initInstall();show('menu');
+window.__blitz={G,parse,parseC,num,poly,vform,P,compileFn,D_,rebuild,renderFns,genLevel,get q(){return G_.q}};
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
