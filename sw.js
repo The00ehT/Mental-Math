@@ -1,8 +1,10 @@
 // Blitzrechnen service worker: app shell offline, fonts cached on first use.
-const CACHE = 'blitzrechnen-4299a7b5f2';
+const CACHE = 'blitzrechnen-1bc4880149';
 const FONTS = 'blitzrechnen-fonts';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png',
-  'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'favicon.ico', 'apple-touch-icon.png', 'icons/icon.svg',
+  'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
+  'icons/apple-touch-icon-120.png', 'icons/apple-touch-icon-152.png', 'icons/apple-touch-icon-167.png',
+  'icons/favicon-16.png', 'icons/favicon-32.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

@@ -2,7 +2,7 @@
 
 **Mental math against the clock.** A fast web app for training arithmetic, functions, calculus and linear algebra, plus *Coin Drop*, a puzzle where you draw functions to steer falling balls through coins. Works offline, installs like an app, English and German.
 
-### ▶ [Play now](https://the00eht.github.io/Mental-Math/)
+**▶ Play:** `https://<your-username>.github.io/blitzrechnen/`
 
 ## Disciplines
 
@@ -37,6 +37,8 @@ All questions are built to be solvable in your head.
 
 Installed, the app starts without internet and your statistics stay on the device.
 
+**Wrong or missing icon on iPhone?** iOS saves the icon at the moment you add the app. After an update, remove the app from the Home Screen, close the tab, open the site again in Safari and add it again.
+
 ## Deploy on GitHub Pages
 
 1. Push these files to a repository named `blitzrechnen`
@@ -49,7 +51,9 @@ Installed, the app starts without internet and your statistics stay on the devic
 index.html             the whole app (HTML, CSS, JS)
 manifest.webmanifest   app name, icons, colors for installing
 sw.js                  service worker for offline use
-icons/                 app icons
+icons/                 app icons (home screen, browser tab)
+favicon.ico            browser tab icon fallback
+apple-touch-icon.png   iOS home screen icon fallback
 ```
 
 ## Deutsch
