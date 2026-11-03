@@ -2,7 +2,7 @@
 
 **Mental math against the clock.** A fast web app for training arithmetic, functions, calculus and linear algebra, plus *Coin Drop*, a puzzle where you draw functions to steer falling balls through coins. Works offline, installs like an app, English and German.
 
-**▶ Play:** `https://<your-username>.github.io/blitzrechnen/`
+### ▶ [Play now](https://the00eht.github.io/Mental-Math/)
 
 ## Disciplines
 
