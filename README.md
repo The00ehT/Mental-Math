@@ -1,6 +1,6 @@
 # ⚡ Blitzrechnen
 
-**Mental math against the clock.** A fast web app for training arithmetic, functions, calculus and linear algebra, plus *Coin Drop*, a puzzle where you draw functions to steer falling balls through coins. Works offline, installs like an app, English and German.
+**Mental math against the clock.** A fast web app for training arithmetic, functions, calculus and linear algebra, plus *Coin Drop*, a puzzle where you draw functions to steer falling balls through coins. Statistics show how you improve, a training mode targets your weak spots. Works offline, installs like an app, English and German.
 
 ### ▶ [Play now](https://the00eht.github.io/Mental-Math/)
 
@@ -8,27 +8,41 @@
 
 | Group | Disciplines |
 |---|---|
-| Arithmetic | Addition · Subtraction · Multiplication · Division |
+| Arithmetic | Addition · Subtraction · Multiplication · Division · Percentages · Fractions · Squares & roots · Powers · Estimating |
 | Functions | Parabola zeros · Parabola vertex · Zero of a line · Match the graph (lines, parabolas, sin, cos, \|x\|, √x, eˣ, hyperbolas) |
-| Calculus | Definite integrals · Partial derivatives · Gradient · Divergence · Curl · Linear ODEs (roots of the characteristic polynomial, incl. complex) |
-| Linear algebra | 2×2 determinant · 2×2 inverse (with 1/det prefactor) · Matrix × vector |
+| Calculus | Definite integrals · Partial derivatives · Gradient · Divergence · Curl · Linear ODEs (roots of the characteristic polynomial, incl. complex) · Taylor coefficients |
+| Linear algebra | Dot product · Cross product · 2×2 determinant · 2×2 inverse (with 1/det prefactor) · Matrix × vector · Matrix × matrix · 2×2 eigenvalues |
 
-All questions are built to be solvable in your head.
+All questions are built to be solvable in your head. Three levels: Easy, Normal, Hard.
 
-## Modes
+## Game modes
 
-- **Timed rounds** of 30, 60, 90 or 120 seconds, or **Endless** with a streak counter
-- **Mixed mode:** pick any categories or whole groups, questions come in random order
-- **Coin Drop:** type up to six functions (with an optional x range) before three balls drop from one source. Every level is generated from a hidden reference solution and tells you how many functions it needs. Score: 100 per coin, +200 for all, −50 per function
-- Three levels: Easy, Normal, Hard
+- **Countdown:** 30, 60, 90, 120 seconds or any length from 10 to 600 s
+- **Endless:** no timer, with a streak counter
+- **Time bonus:** start with 30 s, +3 s for every correct answer, −5 s for every wrong one
+- **Sprint:** 20 correct answers as fast as possible, best time is the record
+- **Mixed mode:** pick any categories or whole groups
+- **Weakness training:** practices the disciplines with your lowest accuracy and repeats questions you got wrong
+- **Coin Drop:** type up to six functions (with an optional x range) before three balls drop from one source. Levels are generated from a hidden reference solution and tell you how many functions they need. Some levels have rules (lines only, parabolas only, sin/cos only), obstacles or moving coins. A *Level of the day* is the same for everyone. Score: 100 per coin, +200 for all, −50 per function
+
+## Statistics
+
+Filterable by level (Easy, Normal, Hard, All):
+
+- **Progress chart** per discipline: correct per minute or average time per round, with a trend line and a sentence like "You're 18 % faster than two weeks ago"
+- **Trend arrows** in the overview: last 7 days compared with the time before
+- **Accuracy bar chart**, sorted from weakest to strongest
+- **Error analysis:** which mistakes you make, for example the 7 times table, sign errors, ad + bc instead of ad − bc, or a wrong prefactor in the inverse
+- **Answer time histogram** with median and share of slow answers
+- **Records** for every mode, Coin Drop results and recent rounds
 
 ## Features
 
-- Statistics per discipline, filterable by level (Easy, Normal, Hard, All): accuracy, average time, best correct-per-minute, longest streak, recent rounds
 - Works offline after the first visit (service worker) and installs to the home screen
 - Backup: save and load your statistics as a file (Settings → Your data)
+- Appearance: Auto, Light or Dark, plus five color themes
 - On-screen keypad on phones with ±, fractions and complex numbers; full keyboard play on desktop
-- Light and dark theme, no tracking, no build step, no dependencies
+- No tracking, no build step, no dependencies
 
 ## Install on your phone
 
@@ -41,7 +55,7 @@ Installed, the app starts without internet and your statistics stay on the devic
 
 ## Deploy on GitHub Pages
 
-1. Push these files to a repository named `blitzrechnen`
+1. Upload all files to a repository named `blitzrechnen` (there are no subfolders, everything sits next to `index.html`)
 2. **Settings → Pages → Deploy from a branch**, branch `main`, folder `/ (root)` → **Save**
 3. The app is live at `https://<your-username>.github.io/blitzrechnen/` after about a minute
 
@@ -51,14 +65,15 @@ Installed, the app starts without internet and your statistics stay on the devic
 index.html             the whole app (HTML, CSS, JS)
 manifest.webmanifest   app name, icons, colors for installing
 sw.js                  service worker for offline use
-icons/                 app icons (home screen, browser tab)
-favicon.ico            browser tab icon fallback
-apple-touch-icon.png   iOS home screen icon fallback
+icon.svg               browser tab icon
+icon-192.png           app icon (install, Android)
+icon-512.png           app icon (install, Android)
+apple-touch-icon.png   iPhone / iPad home screen icon
 ```
 
 ## Deutsch
 
-Kopfrechnen gegen die Uhr: Grundrechnen, Funktionen, Analysis und lineare Algebra in Zeitrunden, im Endlos- oder Mix-Modus, dazu das Knobelspiel *Münzfall*. Die Statistik ist nach Disziplinen getrennt, lässt sich nach Stufe filtern und wird nur auf dem Gerät gespeichert. Ein Backup kannst du unter Einstellungen → Deine Daten speichern und laden. Die App funktioniert nach dem ersten Besuch offline. Auf dem iPhone über Teilen → *Zum Home-Bildschirm* installieren. Sprache unter Einstellungen auf Deutsch umstellen.
+Kopfrechnen gegen die Uhr: 27 Disziplinen von Grundrechnen und Prozent über Funktionen, Integrale, Taylor-Koeffizienten und DGL bis zu Eigenwerten und Matrixprodukten. Spielmodi: Countdown mit frei wählbarer Länge, Endlos, Zeitbonus, Sprint, Mix und „Schwächen trainieren“, dazu das Knobelspiel *Münzfall* mit Regel-Leveln, Hindernissen, bewegten Münzen und Level des Tages. Die Statistik zeigt deinen Verlauf mit Trendlinie, Trendpfeile, eine sortierte Trefferquote, eine Fehleranalyse und die Verteilung deiner Antwortzeiten, getrennt nach Stufe. Alles wird nur auf dem Gerät gespeichert, ein Backup kannst du unter Einstellungen → Deine Daten speichern und laden. Farbthema und Hell/Dunkel sind wählbar. Die App funktioniert nach dem ersten Besuch offline. Auf dem iPhone über Teilen → *Zum Home-Bildschirm* installieren. Sprache unter Einstellungen auf Deutsch umstellen.
 
 ## License
 

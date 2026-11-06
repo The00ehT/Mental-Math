@@ -1,5 +1,5 @@
 // Blitzrechnen service worker: app shell offline, fonts cached on first use.
-const CACHE = 'blitzrechnen-4a497ca392';
+const CACHE = 'blitzrechnen-9c4fe9c3f0';
 const FONTS = 'blitzrechnen-fonts';
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 

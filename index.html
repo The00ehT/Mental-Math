@@ -248,14 +248,92 @@ body.tabs .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .seg.full{display:flex;width:100%;flex-wrap:nowrap}
 .seg.full button{flex:1 1 0;min-width:0;padding:9px 4px;white-space:nowrap;font-size:14px}
 /* compact stats table */
-#s-table table{min-width:0;font-size:13px}
-#s-table th{padding:6px 3px;font-size:11px;letter-spacing:.04em}
-#s-table td{padding:8px 3px;font-size:12.5px}
-#s-table td:first-child{font-size:14px;white-space:normal;padding-left:0}
-#s-table .acc{gap:5px}
-#s-table .acc span.track{width:22px}
-@media (max-width:400px){#s-table .acc span.track{display:none}#v-stats .panel{padding:16px 14px}}
+.stbl table{min-width:0;font-size:13px}
+.stbl th{padding:6px 3px;font-size:11px;letter-spacing:.04em}
+.stbl td{padding:8px 3px;font-size:12.5px}
+.stbl td:first-child{font-size:14px;white-space:normal;padding-left:0}
+.stbl .acc{gap:5px}
+.stbl .acc span.track{width:22px}
+@media (max-width:400px){.stbl .acc span.track{display:none}#v-stats .panel{padding:16px 14px}}
 tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--plot);padding-top:16px}
+/* color themes: each palette swaps accent and plot tokens, light and dark */
+:root[data-palette="ocean"]{--accent:#17b3c6;--accent-ink:#00262b;--plot:#1d5fa8;--cv1:#1d5fa8}
+:root[data-palette="forest"]{--accent:#9bc93a;--accent-ink:#172400;--plot:#2b7a58;--cv1:#2b7a58}
+:root[data-palette="berry"]{--accent:#ff5c9a;--accent-ink:#3a0019;--plot:#7440d9;--cv1:#7440d9}
+:root[data-palette="ember"]{--accent:#ff7a2f;--accent-ink:#2b0d00;--plot:#94408a;--cv1:#94408a}
+@media (prefers-color-scheme: dark){
+  :root[data-palette="ocean"]:not([data-theme="light"]){--accent:#4fd8e8;--plot:#7cbcff;--cv1:#7cbcff}
+  :root[data-palette="forest"]:not([data-theme="light"]){--accent:#b5e35a;--plot:#6fd3a8;--cv1:#6fd3a8}
+  :root[data-palette="berry"]:not([data-theme="light"]){--accent:#ff86b6;--plot:#b79bff;--cv1:#b79bff}
+  :root[data-palette="ember"]:not([data-theme="light"]){--accent:#ff9a5c;--plot:#e08ad6;--cv1:#e08ad6}}
+:root[data-palette="ocean"][data-theme="dark"]{--accent:#4fd8e8;--plot:#7cbcff;--cv1:#7cbcff}
+:root[data-palette="forest"][data-theme="dark"]{--accent:#b5e35a;--plot:#6fd3a8;--cv1:#6fd3a8}
+:root[data-palette="berry"][data-theme="dark"]{--accent:#ff86b6;--plot:#b79bff;--cv1:#b79bff}
+:root[data-palette="ember"][data-theme="dark"]{--accent:#ff9a5c;--plot:#e08ad6;--cv1:#e08ad6}
+/* weakness training */
+.weak{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.chip.static{cursor:default;border-color:var(--line);background:var(--bg);color:var(--ink)}
+.chips.wl{align-items:center}
+/* game additions */
+.streak.flash.ok{color:var(--ok)}.streak.flash.bad{color:var(--bad)}
+.bar.prog i{background:var(--plot)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.62em;line-height:1.15;margin:0 .08em}
+.fr>span:first-child{border-bottom:.09em solid currentColor;padding:0 .2em}
+.prompt sub,.slot sub{font-size:.6em}
+/* statistics */
+.phead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sel{font:600 14px var(--f-body);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:7px 10px;max-width:100%;min-width:0}
+.chart-svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.cg{stroke:var(--line);stroke-width:1}
+.ct{fill:var(--muted);font:600 9px var(--f-mono)}
+.ct.strong{fill:var(--ink)}
+.craw{fill:none;stroke:var(--muted);stroke-width:1.2;opacity:.55}
+.ctrend{fill:none;stroke:var(--plot);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.cdot{fill:var(--plot);stroke:var(--surface);stroke-width:1.5;opacity:.7}
+.chv{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3;opacity:.55}
+.chd{fill:var(--plot);stroke:var(--surface);stroke-width:2}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;background:var(--plot)}
+.legend i.dot{width:8px;height:8px;border-radius:50%;opacity:.7}
+.readout{font:600 13px var(--f-mono);color:var(--ink);min-height:1.4em;font-variant-numeric:tabular-nums}
+.tmsg{margin:0;font-weight:600;display:flex;gap:8px;align-items:baseline}
+.tmsg:empty{display:none}
+.tmsg.good{color:var(--ok)}.tmsg.bad{color:var(--bad)}
+.empty{margin:0;color:var(--muted);font-size:14px;padding:18px 14px;text-align:center;border:1.5px dashed var(--line);border-radius:12px}
+.hbars{display:flex;flex-direction:column;gap:8px}
+.hb{display:grid;grid-template-columns:minmax(0,6.8em) minmax(0,1fr) 3.4em;gap:10px;align-items:center;font-size:13px}
+.hb .hl{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb .ht{height:12px;background:var(--hover);border-radius:4px;overflow:hidden}
+.hb .ht i{display:block;height:100%;background:var(--plot);border-radius:0 4px 4px 0}
+.hb .hv{font:700 13px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.stbl .acc{display:inline-flex}
+.ar{font-weight:800;margin-left:3px;font-family:var(--f-body)}.ar.good{color:var(--ok)}.ar.bad{color:var(--bad)}
+.elist{display:flex;flex-direction:column;gap:12px}
+.erow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:baseline}
+.erow .et{font-size:14px;min-width:0}.erow .et b{font-weight:700}
+.erow .ev{font:600 12px var(--f-mono);color:var(--muted);text-align:right;white-space:nowrap}
+.erow .ebar{grid-column:1/-1;height:6px;background:var(--hover);border-radius:3px;overflow:hidden}
+.erow .ebar i{display:block;height:100%;background:var(--bad);opacity:.8;border-radius:0 3px 3px 0}
+.hbar{fill:var(--plot)}
+.hmed{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:4 3}
+.hbase{stroke:var(--muted);stroke-width:1}
+/* settings */
+#seg-gm button{font-size:13px;padding-inline:2px;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:370px){#seg-gm button{font-size:11.5px;padding-inline:0;letter-spacing:-.01em}}
+.numrow{display:flex;align-items:center;gap:8px;font-size:14px;flex-wrap:wrap}
+.numrow input{width:6.5ch;font:700 16px var(--f-mono);padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.pals{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.sw{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 10px;font-size:14px;font-weight:600;text-align:left}
+.sw[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.sw .dots{display:inline-flex;flex:none}.sw .dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--surface)}.sw .dots i+i{margin-left:-6px}
+.sw-blitz .dots i:first-child{background:#ffb000}.sw-blitz .dots i:last-child{background:#2d5bd7}
+.sw-ocean .dots i:first-child{background:#17b3c6}.sw-ocean .dots i:last-child{background:#1d5fa8}
+.sw-forest .dots i:first-child{background:#9bc93a}.sw-forest .dots i:last-child{background:#2b7a58}
+.sw-berry .dots i:first-child{background:#ff5c9a}.sw-berry .dots i:last-child{background:#7440d9}
+.sw-ember .dots i:first-child{background:#ff7a2f}.sw-ember .dots i:last-child{background:#94408a}
+/* coin drop */
+.rule{margin:0;font-size:13px;color:var(--muted);display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -288,6 +366,12 @@ tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-tra
         <button class="ghost" id="mix-all" data-i18n="all">All</button>
         <span class="warn" id="mix-warn" hidden data-i18n="selectOne">Select at least one category.</span>
       </div>
+    </section>
+    <section class="weak" aria-labelledby="weak-h">
+      <div class="mixhead"><h2 id="weak-h" data-i18n="weakTitle">Weakness training</h2><span class="small" id="weak-best"></span></div>
+      <p class="small" style="margin:0" data-i18n="weakDesc">Practices the disciplines with your lowest accuracy.</p>
+      <div class="chips wl" id="weak-list"></div>
+      <div class="row"><button class="cta" id="weak-start" data-i18n="weakStart">Start training</button><span class="small" id="weak-retry"></span></div>
     </section>
     <section class="dropcard" aria-labelledby="drop-h">
       <div class="txt">
@@ -343,10 +427,32 @@ tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-tra
   <main id="v-stats" class="view" hidden style="display:flex;flex-direction:column;gap:16px">
     <h1 data-i18n="statsTitle">Statistics</h1>
     <div class="seg full" id="seg-slv" role="group" aria-label="Level"></div>
+    <section class="panel"><div class="kpis" id="s-kpis"></div></section>
     <section class="panel">
-      <div class="kpis" id="s-kpis"></div>
-      <div class="table" id="s-table"></div>
+      <div class="phead"><h2 data-i18n="trendTitle">Progress</h2><select class="sel" id="tr-disc" aria-label="Discipline"></select></div>
+      <div class="seg full" id="seg-metric" role="group"></div>
+      <div class="legend" id="tr-legend"></div>
+      <div class="readout" id="tr-read" aria-live="polite"></div>
+      <div id="tr-chart"></div>
+      <p class="tmsg" id="tr-msg"></p>
+    </section>
+    <section class="panel">
+      <h2 data-i18n="histTitle">Answer times</h2>
+      <p class="small" style="margin:0" id="hist-for"></p>
+      <div id="hist"></div>
+      <p class="small" style="margin:0" id="hist-msg"></p>
+    </section>
+    <section class="panel"><h2 data-i18n="accTitle">Accuracy by discipline</h2><div id="acc-chart"></div></section>
+    <section class="panel"><h2 data-i18n="errTitle">Error analysis</h2><div id="err-list"></div></section>
+    <section class="panel">
+      <h2 data-i18n="overview">Overview</h2>
+      <div class="table stbl" id="s-table"></div>
       <p class="small" style="margin:0" id="s-note"></p>
+    </section>
+    <section class="panel">
+      <h2 data-i18n="recsTitle">Records</h2>
+      <div class="table stbl" id="s-recs"></div>
+      <p class="small" style="margin:0" id="recs-note"></p>
     </section>
     <section class="panel">
       <h2 data-i18n="dropTitle">Coin Drop</h2>
@@ -369,11 +475,13 @@ tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-tra
       <span class="dtitle" id="d-title"></span>
       <span class="coincount"><i></i><span id="d-coins">0/0</span></span>
     </div>
+    <p class="rule" id="d-rule" hidden></p>
     <div class="board"><canvas id="d-canvas" aria-label="Coordinate system with coins"></canvas></div>
     <div class="dctl">
       <button class="cta" id="d-start" data-i18n="dropGo">Drop balls</button>
       <button class="ghost" id="d-reset" data-i18n="dReset">Reset balls</button>
       <button class="ghost" id="d-new" data-i18n="newLevel">New level</button>
+      <button class="ghost" id="d-daily" data-i18n="dDaily">Level of the day</button>
       <span class="small" id="d-cost"></span>
     </div>
     <section class="panel dres" id="d-res" hidden></section>
@@ -388,12 +496,22 @@ tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-tra
     <section class="panel">
       <div class="setting"><span class="label" data-i18n="language">Language</span>
         <div class="seg full" id="seg-lang" role="group"></div></div>
-      <div class="setting"><span class="label" data-i18n="duration">Round length</span>
+      <div class="setting"><span class="label" data-i18n="mode">Game mode</span>
+        <div class="seg full" id="seg-gm" role="group"></div>
+        <p class="small" id="gm-note"></p></div>
+      <div class="setting" id="set-dur"><span class="label" data-i18n="duration">Round length</span>
         <div class="seg full" id="seg-dur" role="group"></div>
-        <p class="small" id="dur-note"></p></div>
+        <div class="numrow" id="dur-custom-row" hidden><label for="dur-custom" data-i18n="customLbl">Seconds (10–600)</label><input id="dur-custom" type="number" min="10" max="600" step="5" inputmode="numeric"></div></div>
       <div class="setting"><span class="label" data-i18n="difficulty">Level</span>
         <div class="seg full" id="seg-diff" role="group"></div>
         <p class="small" id="diff-note"></p></div>
+    </section>
+    <section class="panel">
+      <h2 data-i18n="look">Look</h2>
+      <div class="setting"><span class="label" data-i18n="theme">Appearance</span>
+        <div class="seg full" id="seg-thm" role="group"></div></div>
+      <div class="setting"><span class="label" data-i18n="palette">Color</span>
+        <div class="pals" id="pal-row"></div></div>
     </section>
     <section class="panel" id="sec-install" hidden>
       <h2 data-i18n="install">Install app</h2>
@@ -426,9 +544,11 @@ tr.grp td{font-family:var(--f-body);font-size:12px;letter-spacing:.08em;text-tra
 <script>
 (function(){
 "use strict";
-const GROUPS=[['arith',['add','sub','mul','div']],['func',['roots','vertex','line','graph']],['calc',['integ','partial','grad','divg','rot','ode']],['linalg',['det','inv','matvec']]];
+const GROUPS=[['arith',['add','sub','mul','div','pct','frac','sq','pow','est']],['func',['roots','vertex','line','graph']],['calc',['integ','partial','grad','divg','rot','ode','taylor']],['linalg',['dot','cross','det','inv','matvec','matmul','eig']]];
 const DISC=GROUPS.flatMap(g=>g[1]);
-const DURS=[30,60,90,120,0];
+const DURS=[30,60,90,120];
+const GMS=['cd','endless','bonus','sprint'];
+const SPRINT=20,LOGMAX=5000,RETRYMAX=60;
 const DIFFS=['easy','normal','hard'];
 const KEY='blitzrechnen.v1';
 
@@ -496,9 +616,55 @@ de:{ds:{add:"Addition",sub:"Subtraktion",mul:"Multiplik.",div:"Division",roots:"
  noRounds:"Noch keine Runden. Spiel eine zu Ende, dann erscheint sie hier.",bestNote:"Rekord /min gilt für die im Menü gewählte Stufe",
  of:"von",level:"Stufe",sec:"s",min:"min",question:"Aufgabe"}
 };
+function ext(lang,o){const L=I18N[lang];for(const k in o){if(o[k]&&typeof o[k]==='object'&&L[k]&&typeof L[k]==='object')Object.assign(L[k],o[k]);else L[k]=o[k]}}
+ext('en',{
+ d:{pct:"Percentages",frac:"Fractions",sq:"Squares & roots",pow:"Powers",est:"Estimating",taylor:"Taylor coefficient",dot:"Dot product",cross:"Cross product",eig:"2×2 eigenvalues",matmul:"Matrix × matrix",weak:"Weakness training"},
+ ds:{pct:"Percent",frac:"Fractions",sq:"Squares",pow:"Powers",est:"Estimate",taylor:"Taylor",dot:"a · b",cross:"a × b",eig:"Eigenval.",matmul:"A · B",weak:"Weakness"},
+ q:{pct:"Work out the percentage.",frac:"Calculate. Answer as a fraction like 7/12.",sq:"Calculate.",pow:"Calculate. Fractions like 1/8 are fine.",est:"Estimate quickly. Close enough counts: ±10 %, on Hard ±5 %.",taylor:"Coefficient aₙ of xⁿ in the Taylor series around 0. Fractions are fine.",dot:"Compute the dot product.",cross:"Compute the cross product.",eig:"Find both eigenvalues of A.",matmul:"Compute the product."},
+ w:{of:"of"},
+ mode:"Game mode",gmn:{cd:"Countdown",endless:"Endless",bonus:"Time bonus",sprint:"Sprint"},
+ gmNotes:{cd:"Answer as many as you can before the time runs out.",endless:"No timer: play as long as you like and tap Finish to save the round. It counts toward your statistics, not toward the per-minute records.",bonus:"Start with 30 s. Every correct answer adds 3 s, every wrong one costs 5 s. The round ends at 0.",sprint:"Get 20 correct answers as fast as you can. Your best time is the record."},
+ custom:"Custom",customLbl:"Seconds (10–600)",
+ look:"Look",theme:"Appearance",thm:{auto:"Auto",light:"Light",dark:"Dark"},palette:"Color",pals:{blitz:"Lightning",ocean:"Ocean",forest:"Forest",berry:"Berry",ember:"Ember"},
+ weakDesc:"Practices the disciplines with your lowest accuracy at this level and brings back questions you got wrong.",weakStart:"Start training",weakFocus:"Focus:",weakNone:"Play a few rounds first. After 5 answers in a discipline the app knows where to start.",weakRetry:"{n} questions to repeat",retryTag:"Repeat",
+ sprintDone:"20 correct in {t}",sprintOpen:"Sprint not finished",bonusSub:"Correct answers before the time ran out · lasted {t}",bonusRec:"Best {n} correct",bestTime:"Best time",lasted:"Duration",
+ trendTitle:"Progress",allDisc:"All disciplines",mRpm:"Correct / min",mTime:"Ø time",legRound:"Round",legTrend:"Trend (average of 5 rounds)",
+ trendEmpty:"Play at least two rounds with this discipline to see your progress. Recording started with this update.",
+ refWeeks:"than two weeks ago",refFirst:"than in your first rounds",tFaster:"You're {p} % faster {ref}.",tSlower:"You're {p} % slower {ref}.",tMore:"You solve {p} % more per minute {ref}.",tLess:"You solve {p} % fewer per minute {ref}.",tSame:"No clear change yet.",tFew:"Not enough data for a comparison yet.",
+ histTitle:"Answer times",histFor:"Correct answers · {d}",histEmpty:"At least 10 correct answers needed.",histMed:"Median {t}",histSlow:"{p} % of your answers take more than twice as long as usual.",histEven:"Your times are very even.",
+ accTitle:"Accuracy by discipline",accEmpty:"A discipline shows up here after 3 answers.",
+ errTitle:"Error analysis",errEmpty:"No mistakes recorded at this level yet.",errOf:"{w} of {n} wrong",errTimes:"{w}× · {p} % of its mistakes",rowMul:"{n} times table",rowDiv:"dividing by {n}",
+ errs:{sign:"Sign error",carry:"Carry error",decimal:"Decimal point or digits shifted",one:"Only one zero right",xsign:"x of the vertex with the wrong sign",yval:"y of the vertex wrong",family:"Function type mixed up",param:"Shift or reflection mixed up",lower:"Lower limit forgotten",component:"Some components wrong",plus:"ad + bc instead of ad − bc",prefac:"Prefactor wrong",adjsign:"Signs in the adjugate forgotten",adjswap:"Diagonal not swapped",transp:"Rows and columns swapped",order:"Order swapped (b × a or B · A)",elementwise:"Entries multiplied one by one",naive:"Numerators and denominators added separately",noflip:"Reciprocal forgotten",mulexp:"Multiplied instead of raised to the power",negexp:"Negative exponent wrong",fact:"Factorial forgotten",trace:"Diagonal taken as eigenvalues"},
+ overview:"Overview",arrowsNote:"Arrows compare the last 7 days with the time before. # answered · Acc. accuracy · Ø time per correct answer.",better:"better",worse:"worse",
+ recsTitle:"Records",recsEmpty:"No records at this level yet.",thR:{pace:"/min",streak:"Streak",sprint:"Sprint",bonus:"Bonus"},recsNote:"/min best in Countdown · Streak longest in Endless · Sprint best time for 20 correct · Bonus most correct in Time bonus.",
+ dDaily:"Level of the day",rules:{line:"Rule: lines only (mx + b)",parab:"Rule: parabolas only (ax² + bx + c)",trig:"Rule: only functions with sin or cos"},ruleErr:{line:"This level allows lines only.",parab:"This level allows parabolas only (with x²).",trig:"This level allows only functions with sin or cos."},movingNote:"Moving coins travel along their dashed track. Timing matters.",dailyBest:"Best today: {n}"
+});
+ext('de',{
+ d:{pct:"Prozentrechnung",frac:"Bruchrechnung",sq:"Quadrate & Wurzeln",pow:"Potenzen",est:"Überschlagen",taylor:"Taylor-Koeffizient",dot:"Skalarprodukt",cross:"Kreuzprodukt",eig:"Eigenwerte 2×2",matmul:"Matrix × Matrix",weak:"Schwächen trainieren"},
+ ds:{pct:"Prozent",frac:"Brüche",sq:"Quadrate",pow:"Potenzen",est:"Überschlag",taylor:"Taylor",dot:"a · b",cross:"a × b",eig:"Eigenwerte",matmul:"A · B",weak:"Schwächen"},
+ q:{pct:"Rechne die Prozentaufgabe.",frac:"Berechne. Antwort als Bruch wie 7/12.",sq:"Berechne.",pow:"Berechne. Brüche wie 1/8 sind erlaubt.",est:"Überschlage schnell. Nah genug zählt: ±10 %, auf Schwer ±5 %.",taylor:"Koeffizient aₙ von xⁿ der Taylorreihe um 0. Brüche sind erlaubt.",dot:"Berechne das Skalarprodukt.",cross:"Berechne das Kreuzprodukt.",eig:"Bestimme beide Eigenwerte von A.",matmul:"Berechne das Produkt."},
+ w:{of:"von"},
+ mode:"Spielmodus",gmn:{cd:"Countdown",endless:"Endlos",bonus:"Zeitbonus",sprint:"Sprint"},
+ gmNotes:{cd:"Löse so viele Aufgaben wie möglich, bevor die Zeit abläuft.",endless:"Kein Timer: Spiel so lange du willst und tippe auf Fertig, um die Runde zu speichern. Zählt zur Statistik, aber nicht zu den Rekorden pro Minute.",bonus:"Start mit 30 s. Jede richtige Antwort bringt 3 s, jede falsche kostet 5 s. Bei 0 ist die Runde vorbei.",sprint:"Schaffe 20 richtige Antworten so schnell wie möglich. Deine Bestzeit ist der Rekord."},
+ custom:"Eigene",customLbl:"Sekunden (10–600)",
+ look:"Aussehen",theme:"Darstellung",thm:{auto:"Auto",light:"Hell",dark:"Dunkel"},palette:"Farbe",pals:{blitz:"Blitz",ocean:"Ozean",forest:"Wald",berry:"Beere",ember:"Glut"},
+ weakDesc:"Übt die Disziplinen mit deiner niedrigsten Trefferquote auf dieser Stufe und wiederholt Aufgaben, die du falsch hattest.",weakStart:"Training starten",weakFocus:"Schwerpunkt:",weakNone:"Spiel erst ein paar Runden. Ab 5 Antworten pro Disziplin weiß die App, wo sie ansetzen soll.",weakRetry:"{n} Aufgaben zum Wiederholen",retryTag:"Wiederholung",
+ sprintDone:"20 richtige in {t}",sprintOpen:"Sprint nicht beendet",bonusSub:"Richtige Antworten, bevor die Zeit ablief · Dauer {t}",bonusRec:"Rekord {n} richtige",bestTime:"Bestzeit",lasted:"Dauer",
+ trendTitle:"Verlauf",allDisc:"Alle Disziplinen",mRpm:"Richtige / min",mTime:"Ø Zeit",legRound:"Runde",legTrend:"Trend (Ø aus 5 Runden)",
+ trendEmpty:"Spiel mindestens zwei Runden mit dieser Disziplin, dann erscheint hier dein Verlauf. Aufgezeichnet wird ab diesem Update.",
+ refWeeks:"als vor zwei Wochen",refFirst:"als in deinen ersten Runden",tFaster:"Du bist {p} % schneller {ref}.",tSlower:"Du bist {p} % langsamer {ref}.",tMore:"Du löst {p} % mehr Aufgaben pro Minute {ref}.",tLess:"Du löst {p} % weniger Aufgaben pro Minute {ref}.",tSame:"Noch keine deutliche Veränderung.",tFew:"Noch zu wenig Daten für einen Vergleich.",
+ histTitle:"Antwortzeiten",histFor:"Richtige Antworten · {d}",histEmpty:"Mindestens 10 richtige Antworten nötig.",histMed:"Median {t}",histSlow:"{p} % deiner Antworten dauern mehr als doppelt so lang wie üblich.",histEven:"Deine Zeiten sind sehr gleichmäßig.",
+ accTitle:"Trefferquote nach Disziplin",accEmpty:"Eine Disziplin erscheint hier ab 3 Antworten.",
+ errTitle:"Fehleranalyse",errEmpty:"Auf dieser Stufe sind noch keine Fehler aufgezeichnet.",errOf:"{w} von {n} falsch",errTimes:"{w}× · {p} % ihrer Fehler",rowMul:"{n}er-Reihe",rowDiv:"durch {n} teilen",
+ errs:{sign:"Vorzeichenfehler",carry:"Übertrag vergessen",decimal:"Komma oder Stellen verschoben",one:"Nur eine Nullstelle richtig",xsign:"x des Scheitels mit falschem Vorzeichen",yval:"y des Scheitels falsch",family:"Funktionstyp verwechselt",param:"Verschiebung oder Spiegelung verwechselt",lower:"Untere Grenze vergessen",component:"Einzelne Komponenten falsch",plus:"ad + bc statt ad − bc",prefac:"Vorfaktor falsch",adjsign:"Vorzeichen in der Adjunkten vergessen",adjswap:"Diagonale nicht getauscht",transp:"Zeilen und Spalten vertauscht",order:"Reihenfolge vertauscht (b × a oder B · A)",elementwise:"Einträge einzeln multipliziert",naive:"Zähler und Nenner einzeln addiert",noflip:"Kehrwert vergessen",mulexp:"Multipliziert statt potenziert",negexp:"Negativer Exponent falsch",fact:"Fakultät vergessen",trace:"Diagonale als Eigenwerte genommen"},
+ overview:"Übersicht",arrowsNote:"Pfeile vergleichen die letzten 7 Tage mit der Zeit davor. # beantwortet · Quote Trefferquote · Ø Zeit pro richtiger Antwort.",better:"besser",worse:"schlechter",
+ recsTitle:"Rekorde",recsEmpty:"Auf dieser Stufe noch keine Rekorde.",thR:{pace:"/min",streak:"Serie",sprint:"Sprint",bonus:"Bonus"},recsNote:"/min Rekord im Countdown · Serie längste im Endlos-Modus · Sprint Bestzeit für 20 richtige · Bonus meiste Richtige im Zeitbonus.",
+ dDaily:"Level des Tages",rules:{line:"Regel: nur Geraden (mx + b)",parab:"Regel: nur Parabeln (ax² + bx + c)",trig:"Regel: nur Funktionen mit sin oder cos"},ruleErr:{line:"Dieses Level erlaubt nur Geraden.",parab:"Dieses Level erlaubt nur Parabeln (mit x²).",trig:"Dieses Level erlaubt nur Funktionen mit sin oder cos."},movingNote:"Bewegte Münzen laufen auf ihrer gestrichelten Bahn. Das Timing zählt.",dailyBest:"Bestwert heute: {n}"
+});
+I18N.en.weakTitle=I18N.en.d.weak;I18N.de.weakTitle=I18N.de.d.weak;
 
 /* ---------- storage ---------- */
-function fresh(){const d={};DISC.forEach(k=>d[k]={n:0,ok:0,tOk:0});return{v:1,disc:d,best:{},rounds:[],nRounds:0,secs:0,drop:{runs:0,coins:0,perfect:0,best:{}}}}
+function fresh(){const d={};DISC.forEach(k=>d[k]={n:0,ok:0,tOk:0});return{v:1,disc:d,best:{},rounds:[],nRounds:0,secs:0,drop:{runs:0,coins:0,perfect:0,best:{}},log:[],recs:{bonus:{},sprint:{}},retry:[]}}
 function load(k,def){try{const s=JSON.parse(localStorage.getItem(k));if(s)return s}catch(e){}return def}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function ensureS(){if(!S.lv&&DISC.some(k=>S.disc[k]&&S.disc[k].n))S.legacy=true;
@@ -507,18 +673,26 @@ function ensureS(){if(!S.lv&&DISC.some(k=>S.disc[k]&&S.disc[k].n))S.legacy=true;
   if(S.nRounds==null){S.nRounds=S.rounds.length;S.secs=S.rounds.reduce((a,x)=>a+x.dur,0)}
   DIFFS.forEach(df=>{const L=S.lv[df]=S.lv[df]||{};L.disc=L.disc||{};L.streak=L.streak||{};
     if(L.rounds==null){const rs=S.rounds.filter(x=>x.diff===df);L.rounds=rs.length;L.secs=rs.reduce((a,x)=>a+x.dur,0)}
-    DISC.forEach(k=>{if(!L.disc[k])L.disc[k]={n:0,ok:0,tOk:0}});S.drop.lv[df]=S.drop.lv[df]||{runs:0,coins:0,perfect:0}})}
+    DISC.forEach(k=>{if(!L.disc[k])L.disc[k]={n:0,ok:0,tOk:0}});S.drop.lv[df]=S.drop.lv[df]||{runs:0,coins:0,perfect:0}});
+  S.log=Array.isArray(S.log)?S.log:[];S.recs=S.recs||{};S.recs.bonus=S.recs.bonus||{};S.recs.sprint=S.recs.sprint||{};S.retry=Array.isArray(S.retry)?S.retry:[]}
 let S=load(KEY,null); if(!S||S.v!==1)S=fresh(); ensureS();
-let P=Object.assign({lang:'en',dur:60,diff:'normal',mix:DISC.slice()},load(KEY+'.prefs',{}));
+let P=Object.assign({lang:'en',dur:60,diff:'normal',mix:DISC.slice(),gm:'cd',theme:'auto',pal:'blitz',trMetric:'rpm',trDisc:'all'},load(KEY+'.prefs',{}));
+if(P.dur===0){P.gm='endless';P.dur=60}if(!GMS.includes(P.gm))P.gm='cd';if(!(P.dur>=10&&P.dur<=600))P.dur=60;
 const persist=()=>{save(KEY,S);save(KEY+'.prefs',P)};
 const T=()=>I18N[P.lang];
 
 /* ---------- helpers ---------- */
 const $=id=>document.getElementById(id);
-const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
-const pick=a=>a[Math.floor(Math.random()*a.length)];
+/* Randomness: generators draw from rnd(). A question is fully determined by
+   (discipline, level, seed), so a wrong answer can be stored as three values and replayed later. */
+let rnd=Math.random;
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function seeded(seed,fn){const prev=rnd;rnd=mulberry(seed);try{return fn()}finally{rnd=prev}}
+const newSeed=()=>Math.floor(Math.random()*4294967296)>>>0;
+const R=(a,b)=>a+Math.floor(rnd()*(b-a+1));
+const pick=a=>a[Math.floor(rnd()*a.length)];
 const nz=(a,b)=>{let v;do v=R(a,b);while(v===0);return v};
-const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const MINUS='−';
 function num(n,dp){n=+n; if(Object.is(n,-0))n=0; let s=Number.isInteger(n)?String(Math.abs(n)):Math.abs(n).toFixed(dp??1).replace(/\.?0+$/,'');
   if(P.lang==='de')s=s.replace('.',','); return (n<0?MINUS:'')+s}
@@ -533,6 +707,8 @@ function parse(s){s=String(s).trim().replace(/−/g,'-').replace(/,/g,'.').repla
   if(s.includes('/')){const [a,b]=s.split('/');const v=Number(a)/Number(b);return (b===''||!isFinite(v))?NaN:v}
   return /^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)?Number(s):NaN}
 const eq=(a,b)=>Math.abs(a-b)<1e-6;
+const arrEq=(a,b)=>a.length===b.length&&a.every((x,i)=>x!=null&&!isNaN(x)&&eq(x,b[i]));
+const pairEq=(v,a)=>(eq(v[0],a[0])&&eq(v[1],a[1]))||(eq(v[0],a[1])&&eq(v[1],a[0]));
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 function frac(n,d){if(d<0){n=-n;d=-d}const g=gcd(n,d);n/=g;d/=g;return d===1?num(n):(n<0?MINUS:'')+Math.abs(n)+'/'+d}
 /* complex numbers for ODE roots */
@@ -569,20 +745,21 @@ add(d){const r={easy:[[1,20],[1,20]],normal:[[10,99],[10,99]],hard:[[100,999],[1
 sub(d){let a,b;if(d==='easy'){a=R(5,20);b=R(1,a)}else if(d==='normal'){a=R(20,99);b=R(10,a)}else{a=R(100,999);b=R(10,999)}
   return {kind:'num',prompt:`${num(a)} ${MINUS} ${num(b)}`,ans:a-b,slots:['=']}},
 mul(d){const r={easy:[[2,10],[2,10]],normal:[[2,12],[3,20]],hard:[[11,25],[3,19]]}[d];const a=R(...r[0]),b=R(...r[1]);
-  return {kind:'num',prompt:`${num(a)} × ${num(b)}`,ans:a*b,slots:['=']}},
+  return {kind:'num',prompt:`${num(a)} × ${num(b)}`,ans:a*b,slots:['='],rows:[...new Set([a,b].filter(x=>x>=2&&x<=12))].map(x=>'x'+x)}},
 div(d){const r={easy:[[2,10],[2,10]],normal:[[2,12],[3,20]],hard:[[11,25],[3,19]]}[d];const b=R(...r[0]),q=R(...r[1]);
-  return {kind:'num',prompt:`${num(b*q)} ÷ ${num(b)}`,ans:q,slots:['=']}},
+  return {kind:'num',prompt:`${num(b*q)} ÷ ${num(b)}`,ans:q,slots:['='],rows:b<=12?['d'+b]:[]}},
 roots(d){const a=d==='easy'?1:d==='normal'?pick([1,1,-1]):pick([1,-1,2,-2]);const m=d==='easy'?6:d==='normal'?9:8;
   const r1=R(-m,m),r2=R(-m,m);
   return {kind:'pair',ordered:false,prompt:fx(poly([[a,'x²'],[-a*(r1+r2),'x'],[a*r1*r2,'']])),ans:[r1,r2],
-    slots:['x₁ =','x₂ ='],show:()=>`x₁ = ${num(r1)}, x₂ = ${num(r2)}`}},
+    slots:['x₁ =','x₂ ='],show:()=>`x₁ = ${num(r1)}, x₂ = ${num(r2)}`,
+    tag:v=>(r1||r2)&&pairEq(v,[-r1,-r2])?'sign':[r1,r2].some(r=>eq(v[0],r)||eq(v[1],r))?'one':null}},
 vertex(d){const a=d==='easy'?1:d==='normal'?pick([1,-1]):pick([1,-1,2,-2]);const hm=d==='easy'?5:6,km=d==='easy'?9:d==='normal'?10:12;
   const h=R(-hm,hm),k=R(-km,km);
   return {kind:'pair',ordered:true,prompt:fx(poly([[a,'x²'],[-2*a*h,'x'],[a*h*h+k,'']])),ans:[h,k],
-    slots:['S(','|'],tail:')',show:()=>`S(${num(h)} | ${num(k)})`}},
-line(d){let m,r;if(d==='hard'&&Math.random()<.4){m=pick([2,4,-2,-4,6,-6]);r=R(-6,5)+0.5}
+    slots:['S(','|'],tail:')',show:()=>`S(${num(h)} | ${num(k)})`,tag:v=>h!==0&&eq(v[0],-h)?'xsign':eq(v[0],h)?'yval':null}},
+line(d){let m,r;if(d==='hard'&&rnd()<.4){m=pick([2,4,-2,-4,6,-6]);r=R(-6,5)+0.5}
   else{m=d==='easy'?nz(-5,5):nz(-9,9);r=d==='easy'?R(-9,9):R(-12,12)}
-  const b=-m*r; if(b===0&&Math.random()<.7)return G.line(d);
+  const b=-m*r; if(b===0&&rnd()<.7)return G.line(d);
   return {kind:'num',prompt:fx(poly([[m,'x'],[b,'']])),ans:r,slots:['x₀ =']}},
 graph(d){
   const kt=k=>k?` ${k>0?'+':MINUS} ${num(Math.abs(k))}`:'';
@@ -618,10 +795,10 @@ graph(d){
   for(const o of shuffle(cands)){if(!seen.has(key(o))){seen.add(key(o));ds.push(o)}if(ds.length===2)break}
   if(ds.length<2)return G.graph(d);
   const opts=shuffle([correct,...ds]);
-  return {kind:'choice',prompt:fx(F[fam].l(p)),ans:opts.indexOf(correct),svgs:opts.map(o=>plot(F[o.f].f(o.p)))}},
+  return {kind:'choice',prompt:fx(F[fam].l(p)),ans:opts.indexOf(correct),optsF:opts.map(o=>o.f),svgs:opts.map(o=>plot(F[o.f].f(o.p)))}},
 
 integ(d){
-  if(d==='hard'&&Math.random()<.3){const k=pick([1,2,3,4,-1,-2,-3]);const lk=lead(k)+(Math.abs(k)===1?'':' ');
+  if(d==='hard'&&rnd()<.3){const k=pick([1,2,3,4,-1,-2,-3]);const lk=lead(k)+(Math.abs(k)===1?'':' ');
     const o=pick([{f:lk+'sin x',a:'0',b:'π',v:2},{f:lk+'cos x',a:'0',b:'π/2',v:1},{f:(k<0?MINUS:'')+Math.abs(k)+'/x',a:'1',b:'e',v:1},{f:lk+'eˣ',a:'0',b:'ln 2',v:1}]);
     return {kind:'num',long:true,prompt:`${intg(o.a,o.b)} ${o.f} dx`,ans:k*o.v,slots:['=']}}
   for(let t=0;t<400;t++){let a,b,cs;
@@ -632,11 +809,12 @@ integ(d){
     const den=12/gcd(N,12);if(N===0||den>(d==='hard'?3:1))continue;
     const terms=cs.map((c,n)=>[c,n?'x'+SUP[n]:'']).reverse();
     const body=poly(terms);const multi=cs.filter(c=>c).length>1;
-    return {kind:'num',long:true,prompt:`${intg(num(a),num(b))} ${multi?'('+body+')':body} dx`,ans:N/12,slots:['='],show:()=>frac(N,12)}}
+    const Fb=cs.reduce((s2,c,n)=>s2+c*Math.pow(b,n+1)/(n+1),0);
+    return {kind:'num',long:true,prompt:`${intg(num(a),num(b))} ${multi?'('+body+')':body} dx`,ans:N/12,slots:['='],show:()=>frac(N,12),tag:v=>a!==0&&!eq(Fb,N/12)&&eq(v[0],Fb)?'lower':null}}
   return G.integ('easy')},
 partial(d){const c=calcCfg(d);let P,v,w=null,D;
   do{P=randPoly(c.nv,d==='easy'?2:3,c.deg,c.cr);v=R(0,c.nv-1);D=pD(P,v);
-    if(d==='hard'&&Math.random()<.35){w=(v+R(1,2))%3;D=pD(D,w)}else w=null}while(!D.length);
+    if(d==='hard'&&rnd()<.35){w=(v+R(1,2))%3;D=pD(D,w)}else w=null}while(!D.length);
   const p=randPt(c);const lbl=w===null?`∂f/∂${VARS[v]}`:`∂²f/∂${VARS[v]}∂${VARS[w]}`;
   return {kind:'num',long:true,prompt:`<span class="fx">f(${fArgs(c.nv)}) =</span> ${pStr(P)}${ptHtml(p)}`,ans:pEval(D,p),slots:[lbl+'(P) =']}},
 grad(d){const c=calcCfg(d);let P,G2;
@@ -656,12 +834,12 @@ rot(d){const c=calcCfg(d);const p=()=>randPt(c);let F;
   const pt=p();const ans=C.map(([u,v])=>pEval(u,pt)-pEval(v,pt));
   return {kind:'vec',ordered:true,long:true,prompt:`<span class="fx">F(x, y, z) =</span> ${mat(F.map(Pi=>[pStr(Pi)]))}${ptHtml(pt)}`,ans,html:`<span>rot F(P) =</span> ${colIn(3)}`,show:()=>vecTxt(ans)}},
 ode(d){let l=1,p,q,ans;
-  if(d==='hard'&&Math.random()<.6){const al=R(-3,3),be=R(1,4);p=-2*al;q=al*al+be*be;ans=[{re:al,im:be},{re:al,im:-be}]}
-  else{const r1=R(-5,5);let r2;do r2=R(-5,5);while(d==='easy'&&r2===r1);if(d!=='easy'&&Math.random()<.2)r2=r1;
-    p=-(r1+r2);q=r1*r2;ans=[{re:r1,im:0},{re:r2,im:0}];if(d!=='easy'&&Math.random()<.3)l=pick([2,3,-1])}
+  if(d==='hard'&&rnd()<.6){const al=R(-3,3),be=R(1,4);p=-2*al;q=al*al+be*be;ans=[{re:al,im:be},{re:al,im:-be}]}
+  else{const r1=R(-5,5);let r2;do r2=R(-5,5);while(d==='easy'&&r2===r1);if(d!=='easy'&&rnd()<.2)r2=r1;
+    p=-(r1+r2);q=r1*r2;ans=[{re:r1,im:0},{re:r2,im:0}];if(d!=='easy'&&rnd()<.3)l=pick([2,3,-1])}
   return {kind:'vec',ordered:false,complex:true,long:true,prompt:`${poly([[l,'y″'],[l*p,'y′'],[l*q,'y']])} = 0`,ans,slots:['λ₁ =','λ₂ ='],show:()=>`λ₁ = ${cfmt(ans[0])}, λ₂ = ${cfmt(ans[1])}`}},
 det(d){const r=d==='easy'?[0,5]:d==='normal'?[-6,9]:[-12,15];const m=[R(...r),R(...r),R(...r),R(...r)];
-  return {kind:'num',long:true,prompt:`det ${mat([[m[0],m[1]],[m[2],m[3]]])}`,ans:m[0]*m[3]-m[1]*m[2],slots:['=']}},
+  return {kind:'num',long:true,prompt:`det ${mat([[m[0],m[1]],[m[2],m[3]]])}`,ans:m[0]*m[3]-m[1]*m[2],slots:['='],tag:v=>m[1]*m[2]!==0&&eq(v[0],m[0]*m[3]+m[1]*m[2])?'plus':null}},
 inv(d){let m,D;const r=d==='easy'?[0,5]:d==='normal'?[-5,6]:[-9,9];
   for(let t=0;t<2000;t++){m=[R(...r),R(...r),R(...r),R(...r)];D=m[0]*m[3]-m[1]*m[2];
     if(D!==0&&(d==='easy'?Math.abs(D)===1:d==='normal'?Math.abs(D)<=6:Math.abs(D)<=30))break}
@@ -669,11 +847,99 @@ inv(d){let m,D;const r=d==='easy'?[0,5]:d==='normal'?[-5,6]:[-9,9];
   return {kind:'vec',long:true,prompt:`A = ${mat([[m[0],m[1]],[m[2],m[3]]])}`,ans:inv,
     html:`<span>A⁻¹ =</span> <span class="slot" style="flex-wrap:nowrap">{in?}<span>·</span><span class="mat c2">{in}{in}{in}{in}</span></span>`,
     check:v=>{const f=v[0]==null?1:v[0];return inv.every((x,i)=>eq(f*v[i+1],x))},
+    tag:v=>{const f=v[0]==null?1:v[0],e=v.slice(1),M=e.map(x=>f*x);if((m[1]||m[2])&&arrEq(M,[m[3],m[1],m[2],m[0]].map(x=>x/D)))return 'adjsign';if(m[0]!==m[3]&&arrEq(M,[m[0],-m[1],-m[2],m[3]].map(x=>x/D)))return 'adjswap';
+      const i=adj.findIndex(x=>x!==0),k=i>=0?e[i]/adj[i]:0;if(k&&e.every((x,j)=>eq(x,k*adj[j])))return 'prefac';return null},
     showHtml:()=>`${Math.abs(D)===1?(D<0?MINUS:''):frac(1,D)+' · '}${mat([[adj[0],adj[1]],[adj[2],adj[3]]])}`}},
 matvec(d){const n=d==='hard'?3:2;const r=d==='easy'?[0,5]:d==='normal'?[-5,6]:[-4,5];
   const A=Array.from({length:n},()=>Array.from({length:n},()=>R(...r)));const v=Array.from({length:n},()=>R(...r));
   const ans=A.map(row=>row.reduce((s,x,i)=>s+x*v[i],0));
-  return {kind:'vec',ordered:true,long:true,prompt:`${mat(A)} · ${mat(v.map(x=>[x]))}`,ans,html:`<span>=</span> ${colIn(n)}`,show:()=>vecTxt(ans)}}
+  const AT=A[0].map((_,j)=>A.reduce((s2,row,i)=>s2+A[i][j]*v[i],0));
+  return {kind:'vec',ordered:true,long:true,prompt:`${mat(A)} · ${mat(v.map(x=>[x]))}`,ans,html:`<span>=</span> ${colIn(n)}`,show:()=>vecTxt(ans),tag:w=>!arrEq(AT,ans)&&arrEq(w,AT)?'transp':null}},
+pct(d){const of=T().w.of;
+  const ty=pick(d==='easy'?['of','of','rate']:d==='normal'?['of','rate','base']:['of','rate','base','chg']);
+  const ps=d==='easy'?[10,20,25,50,75,5,1,100]:d==='normal'?[5,10,15,20,25,30,40,60,75,12.5,150]:[2.5,7.5,12.5,15,35,45,120,150,0.5,250];
+  for(let i=0;i<300;i++){const p=pick(ps);const G0=d==='easy'?R(1,20)*10:d==='normal'?R(2,60)*10:R(10,400)*5;const W=p*G0/100;
+    if(W===0||!(d==='hard'?Number.isInteger(W*2):Number.isInteger(W)))continue;
+    if(ty==='of')return {kind:'num',prompt:`${num(p)} % ${of} ${num(G0)}`,ans:W,slots:['=']};
+    if(ty==='rate')return {kind:'num',prompt:`${num(W)} ${of} ${num(G0)}`,ans:p,slots:['='],tail:'%'};
+    if(ty==='base')return {kind:'num',prompt:`${num(p)} % = ${num(W)}`,ans:G0,slots:['100 % =']};
+    const up=rnd()<.6;return {kind:'num',prompt:`${num(G0)} ${up?'+':MINUS} ${num(p)} %`,ans:up?G0+W:G0-W,slots:['=']}}
+  return G.pct('easy')},
+frac(d){const dens=d==='easy'?[2,3,4,5,6,8,10]:d==='normal'?[2,3,4,5,6,7,8,9,10,12]:[2,3,4,5,6,7,8,9,10,12,15];
+  const op=pick(d==='easy'?['+','−','×']:['+','−','×','÷']);
+  const b=pick(dens),q2=d==='easy'&&op!=='×'?b:pick(dens);
+  let a=R(1,Math.max(1,b-1)),c=R(1,Math.max(1,q2-1));
+  if(d==='hard'){if(rnd()<.35)a=-a;if(rnd()<.3)c=R(q2+1,2*q2)}
+  let n,m;if(op==='+'){n=a*q2+c*b;m=b*q2}else if(op==='−'){n=a*q2-c*b;m=b*q2}else if(op==='×'){n=a*c;m=b*q2}else{n=a*q2;m=b*c}
+  const F=(x,y)=>`${x<0?MINUS:''}<span class="fr"><span>${Math.abs(x)}</span><span>${y}</span></span>`;
+  return {kind:'num',prompt:`${F(a,b)} ${op} ${F(c,q2)}`,ans:n/m,slots:['='],show:()=>frac(n,m),
+    tag:v=>{const x=v[0];if((op==='+'||op==='−')&&b!==q2){const nn=op==='+'?a+c:a-c,mm=op==='+'?b+q2:b-q2;if(mm&&eq(x,nn/mm))return 'naive'}
+      if(op==='÷'&&eq(x,(a*c)/(b*q2)))return 'noflip';return null}}},
+sq(d){const ty=pick(d==='easy'?['sq','sq','rt']:d==='normal'?['sq','rt','cube','cbrt']:['sq','rt','cube','cbrt','dec','frt']);
+  const me=(n,e)=>v=>eq(v[0],n*e)?'mulexp':null;
+  if(ty==='sq'){const n=d==='easy'?R(2,15):d==='normal'?R(11,25):R(21,45);return {kind:'num',prompt:`${num(n)}²`,ans:n*n,slots:['='],tag:me(n,2)}}
+  if(ty==='rt'){const n=d==='easy'?R(2,15):d==='normal'?R(11,25):R(16,50);return {kind:'num',prompt:`√${num(n*n)}`,ans:n,slots:['=']}}
+  if(ty==='cube'){const n=d==='normal'?R(2,6):R(3,10);return {kind:'num',prompt:`${num(n)}³`,ans:n**3,slots:['='],tag:me(n,3)}}
+  if(ty==='cbrt'){const n=d==='normal'?R(2,6):R(3,10);return {kind:'num',prompt:`∛${num(n**3)}`,ans:n,slots:['=']}}
+  if(ty==='dec'){const k=pick([2,3,4,5,6,7,8,9,11,12,13,14,15,25]);return {kind:'num',prompt:`(${num(k/10)})²`,ans:k*k/100,slots:['='],tag:me(k/10,2)}}
+  const a=R(1,12),b=R(a+1,15);return {kind:'num',prompt:`√<span class="fr"><span>${a*a}</span><span>${b*b}</span></span>`,ans:a/b,slots:['='],show:()=>frac(a,b)}},
+pow(d){let b,e;
+  if(d==='easy')[b,e]=pick([[2,R(2,10)],[3,R(2,4)],[10,R(2,6)],[5,R(2,3)],[4,R(2,3)],[R(2,9),0],[R(2,12),1]]);
+  else if(d==='normal')[b,e]=pick([[2,R(5,12)],[3,R(3,5)],[-2,R(3,7)],[-3,R(2,4)],[5,R(3,4)],[6,R(2,3)],[7,R(2,3)],[11,2],[-1,R(5,21)],[10,-R(1,4)]]);
+  else[b,e]=pick([[2,-R(1,6)],[3,-R(1,3)],[4,-R(1,3)],[-2,-R(1,5)],[0.5,R(2,5)],[0.5,-R(1,4)],[1.5,2],[0.2,R(2,3)],[-3,R(3,5)],[2,R(10,16)],[-5,-R(1,3)]]);
+  const val=Math.pow(b,e),intB=Number.isInteger(b);
+  const bs=b<0||!intB?`(${num(b)})`:num(b);
+  return {kind:'num',prompt:`${bs}<sup>${e<0?MINUS:''}${Math.abs(e)}</sup>`,ans:val,slots:['='],
+    show:()=>e<0&&intB?frac((b<0&&(-e)%2)?-1:1,Math.abs(b)**(-e)):num(Math.round(val*1e6)/1e6,6),
+    tag:v=>{if(e!==1&&e!==0&&eq(v[0],b*e))return 'mulexp';if(e<0&&(eq(v[0],Math.pow(b,-e))||eq(v[0],-Math.pow(b,-e))))return 'negexp';return null}}},
+est(d){const tol=d==='hard'?0.05:0.1;let a,b,op;
+  if(d==='easy'){op=pick(['×','+']);if(op==='×'){a=R(12,99);b=R(11,49)}else{a=R(101,999);b=R(101,999)}}
+  else if(d==='normal'){op=pick(['×','÷','×']);if(op==='×'){a=R(101,999);b=R(11,99)}else{b=R(11,49);a=b*R(20,99)+R(0,b-1)}}
+  else{op=pick(['×','÷','×']);if(op==='×'){a=R(1001,9999);b=R(101,999)}else{b=R(21,99);a=b*R(100,999)+R(0,b-1)}}
+  const ans=op==='×'?a*b:op==='+'?a+b:a/b;
+  return {kind:'num',prompt:`${num(a)} ${op} ${num(b)}`,ans,slots:['≈'],check:v=>Math.abs(v[0]-ans)<=tol*Math.abs(ans),
+    show:()=>`${num(Math.round(ans*10)/10)} (±${tol*100} %)`,tag:v=>{const r=v[0]/ans;return (r>7&&r<13)||(r>0.07&&r<0.13)?'decimal':null}}},
+taylor(d){const fa=n=>n<=1?1:n*fa(n-1);const kx=k=>k===1?'x':k===-1?MINUS+'x':num(k)+'x';
+  const Cb=(m,n)=>{let r=1;for(let i=0;i<n;i++)r=r*(m-i)/(i+1);return Math.round(r)};
+  const pool=d==='easy'?['exp','exp','geo','sin','cos']:d==='normal'?['exp','sin','cos','ln','geo']:['exp','sin','cos','ln','geo','binom','xexp','cosh'];
+  for(let t=0;t<60;t++){const ty=pick(pool);let k=1,n,N,D,lbl;
+    if(ty==='exp'){k=pick(d==='easy'?[1,2,-1]:d==='normal'?[1,2,3,-1,-2]:[2,3,-2,-3]);n=d==='easy'?R(1,3):R(2,4);N=k**n;D=fa(n);lbl=`e<sup>${kx(k)}</sup>`}
+    else if(ty==='sin'){k=d==='easy'?1:pick(d==='normal'?[1,2]:[2,3]);n=d==='easy'?pick([1,3]):pick([1,3,5,2]);N=n%2?(((n-1)/2)%2?-1:1)*k**n:0;D=fa(n);lbl=`sin(${kx(k)})`}
+    else if(ty==='cos'){k=d==='easy'?1:pick(d==='normal'?[1,2]:[2,3]);n=d==='easy'?pick([0,2]):pick([2,4,3]);N=n%2?0:((n/2)%2?-1:1)*k**n;D=fa(n);lbl=`cos(${kx(k)})`}
+    else if(ty==='ln'){k=d==='hard'?pick([2,-1,3,-2]):1;n=R(1,d==='hard'?4:5);N=(n%2?1:-1)*k**n;D=n;lbl=`ln(1 ${k<0?MINUS:'+'} ${Math.abs(k)===1?'':Math.abs(k)}x)`}
+    else if(ty==='geo'){k=pick(d==='easy'?[1,2]:[2,3,-1,-2]);n=R(2,4);N=k**n;D=1;lbl=`<span class="fr"><span>1</span><span>1 ${k<0?'+':MINUS} ${Math.abs(k)===1?'':Math.abs(k)}x</span></span>`}
+    else if(ty==='binom'){const m=R(3,7);n=R(2,Math.min(4,m));N=Cb(m,n);D=1;lbl=`(1 + x)<sup>${m}</sup>`}
+    else if(ty==='xexp'){n=R(2,5);N=1;D=fa(n-1);lbl='x · e<sup>x</sup>'}
+    else{n=R(2,6);N=n%2?0:2;D=fa(n);lbl=`e<sup>x</sup> + e<sup>${MINUS}x</sup>`}
+    if(d!=='easy'&&N===0&&rnd()<.6)continue;
+    const g=gcd(N,D),nn=N/g,dd=D/g;
+    return {kind:'num',prompt:fx(lbl),ans:N/D,slots:[`a<sub>${n}</sub> =`],show:()=>frac(nn,dd),tag:v=>D!==1&&N!==0&&eq(v[0],N)?'fact':null}}
+  return G.taylor('easy')},
+dot(d){const n=d==='easy'?2:3,r=d==='easy'?[0,6]:d==='normal'?[-5,5]:[-9,9];
+  const a=Array.from({length:n},()=>R(...r)),b=Array.from({length:n},()=>R(...r));
+  return {kind:'num',long:true,prompt:`${mat(a.map(x=>[x]))} · ${mat(b.map(x=>[x]))}`,ans:a.reduce((s,x,i)=>s+x*b[i],0),slots:['=']}},
+cross(d){const r=d==='easy'?[0,3]:d==='normal'?[-4,4]:[-7,7];let a,b,c;
+  do{a=[R(...r),R(...r),R(...r)];b=[R(...r),R(...r),R(...r)];c=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}while(c.every(x=>x===0));
+  return {kind:'vec',ordered:true,long:true,prompt:`${mat(a.map(x=>[x]))} × ${mat(b.map(x=>[x]))}`,ans:c,html:`<span>=</span> ${colIn(3)}`,show:()=>vecTxt(c),
+    tag:v=>c.every((x,i)=>eq(v[i],-x))?'order':null}},
+eig(d){const lr=d==='easy'?[-4,6]:d==='normal'?[-6,6]:[-9,9];
+  const mk=(m,l1,l2)=>({kind:'pair',ordered:false,long:true,prompt:`A = ${mat([[m[0],m[1]],[m[2],m[3]]])}`,ans:[l1,l2],slots:['λ₁ =','λ₂ ='],show:()=>`λ₁ = ${num(l1)}, λ₂ = ${num(l2)}`,
+    tag:v=>{if((l1||l2)&&pairEq(v,[-l1,-l2]))return 'sign';if(m[1]&&m[2]&&pairEq(v,[m[0],m[3]]))return 'trace';return null}});
+  for(let t=0;t<800;t++){const l1=R(...lr),l2=R(...lr);
+    if(d==='easy'){const b=nz(-5,5);return mk(rnd()<.5?[l1,b,0,l2]:[l1,0,b,l2],l1,l2)}
+    const a=R(-6,8),dd=l1+l2-a;if(Math.abs(dd)>9)continue;const bc=a*dd-l1*l2;let b,c;
+    if(bc===0){if(d==='normal')continue;if(rnd()<.5){b=0;c=nz(-6,6)}else{c=0;b=nz(-6,6)}}
+    else{const ds=[];for(let k=1;k<=Math.abs(bc);k++)if(bc%k===0&&k<=9&&Math.abs(bc/k)<=9)ds.push(k);if(!ds.length)continue;b=pick(ds)*(rnd()<.5?1:-1);c=bc/b}
+    return mk([a,b,c,dd],l1,l2)}
+  return G.eig('easy')},
+matmul(d){const r=d==='easy'?[0,4]:d==='normal'?[-4,5]:[-3,4],k=d==='hard'?3:2;
+  const A=Array.from({length:2},()=>Array.from({length:k},()=>R(...r))),B=Array.from({length:k},()=>Array.from({length:2},()=>R(...r)));
+  const mm=(X,Y)=>X.map(row=>Y[0].map((_,j)=>row.reduce((s,x,i)=>s+x*Y[i][j],0)));const C=mm(A,B),ans=C.flat();
+  return {kind:'vec',ordered:true,long:true,prompt:`${mat(A)} · ${mat(B)}`,ans,html:`<span>=</span> <span class="mat c2">{in}{in}{in}{in}</span>`,showHtml:()=>mat(C),
+    tag:v=>{if(C[0][1]!==C[1][0]&&arrEq(v,[C[0][0],C[1][0],C[0][1],C[1][1]]))return 'transp';
+      if(k===2){const BA=mm(B,A).flat();if(!arrEq(BA,ans)&&arrEq(v,BA))return 'order';
+        const H=[A[0][0]*B[0][0],A[0][1]*B[0][1],A[1][0]*B[1][0],A[1][1]*B[1][1]];if(!arrEq(H,ans)&&arrEq(v,H))return 'elementwise'}return null}}}
+
 };
 function plot(f){const Sz=160,U=Sz/12,X=x=>Sz/2+x*U,Y=y=>Sz/2-y*U;let g='';
   for(let i=-5;i<=5;i++){if(!i)continue;g+=`<line x1="${X(i)}" y1="0" x2="${X(i)}" y2="${Sz}"/><line x1="0" y1="${Y(i)}" x2="${Sz}" y2="${Y(i)}"/>`}
@@ -683,7 +949,26 @@ function plot(f){const Sz=160,U=Sz/12,X=x=>Sz/2+x*U,Y=y=>Sz/2-y*U;let g='';
 
 const SYM={add:'+',sub:MINUS,mul:'×',div:'÷',roots:'x₁ x₂',vertex:'S(x|y)',line:'y=0',
  integ:'∫ dx',partial:'∂f/∂x',grad:'∇f',divg:'∇·F',rot:'∇×F',ode:'λ² + pλ',det:'det A',inv:'A⁻¹',matvec:'A·v',
+ pct:'%',frac:'a/b',sq:'√x',pow:'xⁿ',est:'≈',taylor:'aₙxⁿ',dot:'a·b',cross:'a×b',eig:'λ₁ λ₂',matmul:'A·B',
  graph:'<svg viewBox="0 0 40 30" aria-hidden="true"><path d="M2 15h36M20 2v26" stroke="currentColor" stroke-width="1.5" opacity=".45" fill="none"/><path d="M6 4Q20 40 34 4" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>'};
+
+/* ---------- question helpers ---------- */
+function genQ(d,diff,seed){const q=seeded(seed,()=>G[d](diff));q.disc=d;q.seed=seed;q.diff=diff;return q}
+/* Names the kind of mistake for the error analysis. Specific checks live in the generator (q.tag). */
+function classify(q,vals,ch){try{
+  if(q.kind==='choice')return ch==null?'other':(q.optsF&&q.optsF[ch]!==q.optsF[q.ans]?'family':'param');
+  if(!vals)return 'other';
+  if(q.tag){const t=q.tag(vals);if(t)return t}
+  const A=q.ans;
+  if(q.complex){const ng=A.map(c=>({re:-c.re,im:-c.im}));if(A.some(c=>c.re||c.im)&&((ceq(vals[0],ng[0])&&ceq(vals[1],ng[1]))||(ceq(vals[0],ng[1])&&ceq(vals[1],ng[0]))))return 'sign';return 'other'}
+  if(!Array.isArray(A)){const v=vals[0];if(v==null||isNaN(v))return 'other';
+    if(A!==0&&eq(v,-A))return 'sign';
+    if(A!==0&&v!==0){const r=Math.log10(Math.abs(v/A));if(Math.abs(r-Math.round(r))<1e-9&&Math.round(r)!==0)return 'decimal'}
+    if(['add','sub','mul'].includes(q.disc)&&[10,100,1000].some(x=>eq(Math.abs(v-A),x)))return 'carry';
+    return 'other'}
+  if(vals.length===A.length){if(A.some(a=>a!==0)&&A.every((a,i)=>eq(vals[i],-a)))return 'sign';
+    if(q.ordered!==false&&A.some((a,i)=>eq(vals[i],a)))return 'component'}
+  return 'other'}catch(e){return 'other'}}
 
 /* ---------- views ---------- */
 const views=['menu','game','result','stats','settings','drop'];
@@ -693,8 +978,13 @@ function show(v){views.forEach(n=>$('v-'+n).hidden=n!==v);
   try{window.scrollTo(0,0)}catch(e){}}
 function goTab(v){stop();if(v==='stats')renderStats();else if(v==='settings')renderSettings();else renderMenu();show(v)}
 const mmss=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-const durLabel=(dur,endless)=>endless?`${T().endless} · ${mmss(dur)}`:`${dur} ${T().sec}`;
+const fmtSec=s=>{const m=Math.floor(s/60),r=s-m*60;let x=r.toFixed(1);if(r<10)x='0'+x;if(P.lang==='de')x=x.replace('.',',');return m+':'+x};
+const gmOf=r=>r.gm||(r.endless?'endless':'cd');
+function durLabel(r){const t=T(),gm=gmOf(r);if(gm==='cd')return `${r.dur} ${t.sec}`;
+  if(gm==='sprint')return `${t.gmn.sprint} · ${r.time!=null?fmtSec(r.time):r.ok+'/'+SPRINT}`;return `${t.gmn[gm]} · ${mmss(r.dur)}`}
 const coarse=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
+const dayKey=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fmtDay=ts=>new Date(ts).toLocaleDateString(P.lang==='de'?'de-DE':'en-US',{day:'numeric',month:'short'});
 
 function applyI18n(){const t=T();document.documentElement.lang=P.lang;
   document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t[el.dataset.i18n];if(typeof v==='string')el.textContent=v});
@@ -703,36 +993,82 @@ function applyI18n(){const t=T();document.documentElement.lang=P.lang;
   if(!$('v-game').hidden&&G_.q)refreshQLabels();
   if(!$('v-drop').hidden){renderFns();rebuild();updateBar();renderDropRes()}}
 
-function bestFor(key){const b=S.best[key];return b&&b[P.diff]!=null?b[P.diff]:null}
+/* ---------- theme ---------- */
+const PALS=['blitz','ocean','forest','berry','ember'];
+let themeSet=false;
+function applyTheme(){const r=document.documentElement;
+  if(P.theme==='light'||P.theme==='dark'){r.setAttribute('data-theme',P.theme);themeSet=true}else if(themeSet){r.removeAttribute('data-theme');themeSet=false}
+  if(P.pal&&P.pal!=='blitz')r.setAttribute('data-palette',P.pal);else r.removeAttribute('data-palette');
+  if(D_&&D_.lvl)draw();}
+
+/* ---------- records ---------- */
+function recVal(gm,key,diff){
+  if(diff==='all'){const vs=DIFFS.map(df=>recVal(gm,key,df)).filter(v=>v!=null);if(gm==='endless'&&S.streak[key])vs.push(S.streak[key]);
+    if(!vs.length)return null;return gm==='sprint'?Math.min(...vs):Math.max(...vs)}
+  if(gm==='cd'){const b=S.best[key];return b&&b[diff]!=null?b[diff]:null}
+  if(gm==='endless')return S.lv[diff].streak[key]||null;
+  const o=S.recs[gm][key];return o&&o[diff]!=null?o[diff]:null}
+function recSet(gm,key,diff,v){(S.recs[gm][key]=S.recs[gm][key]||{})[diff]=v}
+function recTxt(gm,v){const t=T();if(v==null)return null;if(gm==='cd')return `${t.best} ${num(v)} ${t.perMin}`;if(gm==='endless')return `${t.bestStreak} ${v}`;
+  if(gm==='bonus')return t.bonusRec.replace('{n}',v);return `${t.bestTime} ${fmtSec(v)}`}
+
+/* ---------- weakness training ---------- */
+function weakPick(diff){const L=S.lv[diff].disc;const c=DISC.filter(k=>L[k]&&L[k].n>=5);if(!c.length)return [];
+  const avg=k=>L[k].ok?L[k].tOk/L[k].ok:null;const ts=c.map(avg).filter(x=>x).sort((a,b)=>a-b);const med=ts.length?ts[Math.floor(ts.length/2)]:1;
+  const sc=k=>(1-L[k].ok/L[k].n)+0.25*Math.max(-1,Math.min(1,Math.log2((avg(k)||med*2)/med)));
+  return c.sort((a,b)=>sc(b)-sc(a)).slice(0,3)}
+function weakDiscs(){const w=weakPick(P.diff);if(w.length)return w;return [...new Set(S.retry.filter(r=>r.l===P.diff).map(r=>r.d))].filter(k=>DISC.includes(k)).slice(0,3)}
+
+/* ---------- settings & menu ---------- */
 function renderSettings(){const t=T();
   $('seg-lang').innerHTML=[['en','English'],['de','Deutsch']].map(([k,l])=>`<button data-lang="${k}" aria-pressed="${P.lang===k}">${l}</button>`).join('');
-  $('seg-dur').innerHTML=DURS.map(d=>`<button data-dur="${d}" aria-pressed="${P.dur===d}">${d?d+' '+t.sec:t.endless}</button>`).join('');
+  $('seg-gm').innerHTML=GMS.map(g=>`<button data-gm="${g}" aria-pressed="${P.gm===g}">${t.gmn[g]}</button>`).join('');
+  $('gm-note').textContent=t.gmNotes[P.gm];
+  $('set-dur').hidden=P.gm!=='cd';
+  const custom=!!P.durCustom||!DURS.includes(P.dur);
+  $('seg-dur').innerHTML=DURS.map(d=>`<button data-dur="${d}" aria-pressed="${!custom&&P.dur===d}">${d} ${t.sec}</button>`).join('')+`<button data-dur="custom" aria-pressed="${custom}">${t.custom}</button>`;
+  $('dur-custom-row').hidden=!custom;const ci=$('dur-custom');if(document.activeElement!==ci)ci.value=P.dur;
   $('seg-diff').innerHTML=DIFFS.map(d=>`<button data-diff="${d}" aria-pressed="${P.diff===d}">${t[d]}</button>`).join('');
-  $('dur-note').textContent=t.durNote;$('diff-note').textContent=t.diffNotes[P.diff];}
+  $('diff-note').textContent=t.diffNotes[P.diff];
+  $('seg-thm').innerHTML=['auto','light','dark'].map(k=>`<button data-thm="${k}" aria-pressed="${P.theme===k}">${t.thm[k]}</button>`).join('');
+  $('pal-row').innerHTML=PALS.map(k=>`<button class="sw sw-${k}" data-pal="${k}" aria-pressed="${P.pal===k}"><span class="dots" aria-hidden="true"><i></i><i></i></span>${t.pals[k]}</button>`).join('');}
+function modeName(){const t=T();return P.gm==='cd'?`${t.gmn.cd} ${P.dur} ${t.sec}`:t.gmn[P.gm]}
 function renderMenu(){const t=T();
-  $('cur').innerHTML=`<span>${t.round}: <strong>${P.dur?P.dur+' '+t.sec:t.endless}</strong></span><span>${t.difficulty}: <strong>${t[P.diff]}</strong></span><button class="linkbtn" data-tab="settings">${t.change}</button>`;
-  const card=k=>{const b=bestFor(k);
-    return `<button class="disc" data-disc="${k}"><span class="sym">${SYM[k]}</span><span class="dname">${t.d[k]}</span><span class="dmeta">${b!=null?t.best+' '+num(b)+' '+t.perMin:S.lv[P.diff].disc[k].n?Math.round(S.lv[P.diff].disc[k].ok/S.lv[P.diff].disc[k].n*100)+' % · '+S.lv[P.diff].disc[k].n+' '+t.answered:t.notPlayed}</span></button>`};
+  $('cur').innerHTML=`<span>${t.mode}: <strong>${modeName()}</strong></span><span>${t.difficulty}: <strong>${t[P.diff]}</strong></span><button class="linkbtn" data-tab="settings">${t.change}</button>`;
+  const L=S.lv[P.diff].disc;
+  const card=k=>{const rv=recTxt(P.gm,recVal(P.gm,k,P.diff)),s=L[k];
+    return `<button class="disc" data-disc="${k}"><span class="sym">${SYM[k]}</span><span class="dname">${t.d[k]}</span><span class="dmeta">${rv||(s.n?Math.round(s.ok/s.n*100)+' % · '+s.n+' '+t.answered:t.notPlayed)}</span></button>`};
   $('groups').innerHTML=GROUPS.map(([g,ks])=>`<section class="gsec"><span class="label">${t.g[g]}</span><div class="grid${ks.length%3===0?' g3':''}">${ks.map(card).join('')}</div></section>`).join('');
   $('chips').innerHTML=GROUPS.map(([g,ks])=>`<div class="cgroup"><button class="glabel" data-group="${g}">${t.g[g]}</button>${ks.map(k=>`<button class="chip" data-chip="${k}" aria-pressed="${P.mix.includes(k)}">${t.d[k]}</button>`).join('')}</div>`).join('');
-  const mb=bestFor('mix');$('mix-best').textContent=mb!=null?`${t.best} ${num(mb)} ${t.perMin}`:'';
+  $('mix-best').textContent=recTxt(P.gm,recVal(P.gm,'mix',P.diff))||'';
   $('mix-start').disabled=!P.mix.length;
+  const wk=weakDiscs(),nr=S.retry.filter(r=>r.l===P.diff).length;
+  $('weak-list').innerHTML=wk.length?`<span class="small">${t.weakFocus}</span>`+wk.map(k=>`<span class="chip static">${t.d[k]}</span>`).join(''):`<span class="small">${t.weakNone}</span>`;
+  $('weak-retry').textContent=nr?t.weakRetry.replace('{n}',nr):'';
+  $('weak-start').disabled=!wk.length;
+  $('weak-best').textContent=recTxt(P.gm,recVal(P.gm,'weak',P.diff))||'';
   const db=S.drop.best[P.diff];$('drop-best').textContent=db!=null?`${t.dBest} (${t[P.diff]}): ${db}`:'';}
 
 /* ---------- game ---------- */
-const G_={};let raf=0,lockT=0,last=null;
-function start(mode,discs){
-  const endless=P.dur===0,now=performance.now();
-  Object.assign(G_,{mode,discs:discs.slice(),dur:P.dur,endless,diff:P.diff,ok:0,n:0,per:{},t0:now,endAt:endless?Infinity:now+P.dur*1000,q:null,locked:false,prevDisc:null,streak:0,maxStreak:0});
-  const t=T();$('score').textContent='0';$('keypad').hidden=true;$('kbd-hint').hidden=coarse;
-  $('bar').hidden=endless;$('streak').hidden=!endless;$('streak').textContent=`${t.streak} 0`;$('bar').classList.remove('low');
-  $('quit').textContent=endless?t.finish:t.quit;$('kbd-hint').textContent=endless?t.hint.replace(t.quit.toLowerCase(),t.finish.toLowerCase()):t.hint;
+const G_={};let raf=0,lockT=0,last=null,flashT=0;
+function start(mode,discs){if(!discs||!discs.length)return;
+  const gm=P.gm,now=performance.now(),t=T();
+  Object.assign(G_,{mode,discs:discs.slice(),gm,dur:P.dur,diff:P.diff,ok:0,n:0,per:{},log:[],rid:Date.now(),t0:now,
+    endAt:gm==='cd'?now+P.dur*1000:gm==='bonus'?now+30000:Infinity,peak:30000,q:null,locked:false,prevDisc:null,streak:0,maxStreak:0,sinceRetry:2,done:false,over:false});
+  $('score').textContent='0';$('keypad').hidden=true;$('kbd-hint').hidden=coarse;
+  const bar=$('bar'),st=$('streak');bar.hidden=gm==='endless';bar.classList.remove('low');bar.classList.toggle('prog',gm==='sprint');
+  st.hidden=gm==='cd';st.className='streak';st.textContent=gm==='endless'?`${t.streak} 0`:gm==='sprint'?`0/${SPRINT}`:'';
+  const fin=gm==='endless';$('quit').textContent=fin?t.finish:t.quit;$('kbd-hint').textContent=fin?t.hint.replace(t.quit.toLowerCase(),t.finish.toLowerCase()):t.hint;
   show('game');next();tick();}
-function leaveGame(){if($('v-game').hidden)return;if(G_.endless&&G_.n>0){finish();return}stop();renderMenu();show('menu')}
-function next(){const ds=G_.discs;let d=pick(ds);if(ds.length>1&&d===G_.prevDisc)d=pick(ds);G_.prevDisc=d;
-  let q;for(let i=0;i<5;i++){q=G[d](G_.diff);if(!G_.q||q.prompt!==G_.q.prompt)break}
-  q.disc=d;G_.q=q;G_.locked=false;G_.qStart=performance.now();renderQ(q);}
-function refreshQLabels(){const t=T(),q=G_.q;$('q-tag').textContent=t.d[q.disc];$('q-instr').textContent=t.q[q.disc];$('q-count').textContent=`${t.question} ${G_.n+1}`}
+function leaveGame(){if($('v-game').hidden)return;if(G_.gm==='endless'&&G_.n>0){finish();return}stop();persist();renderMenu();show('menu')}
+function next(){let q=null;
+  if(G_.mode==='weak'){const rq=S.retry.filter(r=>r.l===G_.diff&&DISC.includes(r.d)&&(!G_.q||r.s!==G_.q.seed));
+    if(rq.length&&G_.sinceRetry>=2&&Math.random()<.5){const it=rq[0];q=genQ(it.d,G_.diff,it.s);q.retry=true;G_.sinceRetry=0}}
+  if(!q){const ds=G_.discs;let d=pick(ds);if(ds.length>1&&d===G_.prevDisc)d=pick(ds);
+    for(let i=0;i<5;i++){q=genQ(d,G_.diff,newSeed());if(!G_.q||q.prompt!==G_.q.prompt)break}G_.sinceRetry++}
+  G_.prevDisc=q.disc;G_.q=q;G_.locked=false;G_.qStart=performance.now();renderQ(q);}
+function refreshQLabels(){const t=T(),q=G_.q;$('q-tag').textContent=t.d[q.disc];$('q-instr').textContent=t.q[q.disc];
+  $('q-count').textContent=`${t.question} ${G_.n+1}`+(q.retry?` · ${t.retryTag}`:'')}
 function renderQ(q){const card=$('qcard');card.classList.remove('ok','bad');$('fb').textContent='';$('fb').className='fb';
   refreshQLabels();const pe=$('q-prompt');pe.innerHTML=q.prompt;pe.classList.toggle('long',!!q.long);pe.classList.toggle('one',!/class="(mat|pt)"/.test(q.prompt));fitPrompt();const A=$('q-answer');
   document.querySelectorAll('.kx').forEach(k=>k.hidden=!q.complex);
@@ -740,7 +1076,7 @@ function renderQ(q){const card=$('qcard');card.classList.remove('ok','bad');$('f
     $('check').hidden=true;$('keypad').hidden=true;return}
   $('check').hidden=false;$('keypad').hidden=!coarse;
   const im=coarse?'none':(q.complex?'text':'decimal');let n=0;
-  const inp=(opt,lbl)=>{const i=n++;return `<input class="in${opt?' opt':''}" id="in${i}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="${im}" enterkeyhint="go" ${opt?'placeholder="1"':''} aria-label="${esc(lbl||T().entry+' '+(i+1))}">`};
+  const inp=(opt,lbl)=>{const i=n++;return `<input class="in${opt?' opt':''}" id="in${i}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="${im}" enterkeyhint="go" ${opt?'placeholder="1"':''} aria-label="${esc((lbl||T().entry+' '+(i+1)).replace(/<[^>]+>/g,''))}">`};
   A.innerHTML=q.html?q.html.replace(/\{in(\?)?\}/g,(_,o)=>inp(!!o))
     :q.slots.map(l=>`<span class="slot">${l} ${inp(false,l)}</span>`).join('')+(q.tail?`<span>${q.tail}</span>`:'');
   activeIn=$('in0');activeIn.focus({preventScroll:true});}
@@ -750,9 +1086,9 @@ function fitPrompt(){const el=$('q-prompt');el.style.fontSize='';if(!el.classLis
 window.addEventListener('resize',()=>{if(G_.q)fitPrompt()});
 try{document.fonts&&document.fonts.ready.then(()=>{if(G_.q)fitPrompt()})}catch(e){}
 function inputs(){return [...document.querySelectorAll('#q-answer .in')]}
-function submit(skip){if(G_.locked||!G_.q)return;const q=G_.q;let ok=false;
+function submit(skip){if(G_.locked||!G_.q)return;const q=G_.q;let ok=false,vals=null;
   if(!skip){const ins=inputs();const pf=q.complex?parseC:parse;
-    const vals=ins.map(i=>{const s=i.value.trim();if(!s&&i.classList.contains('opt'))return null;return pf(s)});
+    vals=ins.map(i=>{const s=i.value.trim();if(!s&&i.classList.contains('opt'))return null;return pf(s)});
     const bad=vals.findIndex((v,i)=>q.complex?v===null:(v!==null&&isNaN(v))||(v===null&&!ins[i].classList.contains('opt')));
     if(bad>=0){const el=ins[bad];el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.focus();activeIn=el;return}
     const e=q.complex?ceq:eq;
@@ -760,62 +1096,165 @@ function submit(skip){if(G_.locked||!G_.q)return;const q=G_.q;let ok=false;
     else if(!Array.isArray(q.ans))ok=eq(vals[0],q.ans);
     else if(q.ordered)ok=q.ans.every((a,i)=>e(vals[i],a));
     else ok=(e(vals[0],q.ans[0])&&e(vals[1],q.ans[1]))||(e(vals[0],q.ans[1])&&e(vals[1],q.ans[0]));}
-  resolve(ok,skip);}
+  resolve(ok,skip,vals,null);}
 function choose(i){if(G_.locked||!G_.q||G_.q.kind!=='choice')return;const q=G_.q;const btns=document.querySelectorAll('.opt');
-  btns[q.ans].classList.add('right');if(i!==q.ans)btns[i].classList.add('wrong');resolve(i===q.ans,false);}
-function resolve(ok,skip){const t=T(),q=G_.q;G_.locked=true;const dt=performance.now()-G_.qStart;
+  btns[q.ans].classList.add('right');if(i!==q.ans)btns[i].classList.add('wrong');resolve(i===q.ans,false,null,i);}
+function resolve(ok,skip,vals,ch){const t=T(),q=G_.q;G_.locked=true;const now=performance.now(),dt=now-G_.qStart;
   const p=G_.per[q.disc]||(G_.per[q.disc]={n:0,ok:0,tOk:0});p.n++;G_.n++;
   if(ok){p.ok++;p.tOk+=dt;G_.ok++;$('score').textContent=G_.ok;G_.streak++;G_.maxStreak=Math.max(G_.maxStreak,G_.streak)}else G_.streak=0;
-  $('streak').textContent=`${t.streak} ${G_.streak}`;
+  const tags=(q.rows||[]).slice();if(!ok)tags.push(skip?'skip':classify(q,vals,ch));
+  const entry={t:Date.now(),r:G_.rid,d:q.disc,l:G_.diff[0],ok:ok?1:0,ms:Math.round(dt)};if(tags.length)entry.g=tags;G_.log.push(entry);
+  const ri=S.retry.findIndex(r=>r.s===q.seed&&r.d===q.disc);
+  if(ok){if(ri>=0)S.retry.splice(ri,1)}
+  else if(ri>=0)S.retry.push(S.retry.splice(ri,1)[0]);
+  else{S.retry.push({d:q.disc,l:G_.diff,s:q.seed});if(S.retry.length>RETRYMAX)S.retry.shift()}
+  const st=$('streak');
+  if(G_.gm==='endless')st.textContent=`${t.streak} ${G_.streak}`;
+  else if(G_.gm==='sprint'){st.textContent=`${G_.ok}/${SPRINT}`;if(G_.ok>=SPRINT)G_.done=true}
+  else if(G_.gm==='bonus'){G_.endAt+=ok?3000:-5000;G_.peak=Math.max(G_.peak,G_.endAt-now);st.textContent=ok?'+3 s':MINUS+'5 s';st.className='streak flash '+(ok?'ok':'bad');
+    clearTimeout(flashT);flashT=setTimeout(()=>{st.textContent='';st.className='streak'},900)}
   $('qcard').classList.add(ok?'ok':'bad');const fb=$('fb');fb.className='fb '+(ok?'ok':'bad');
   if(ok)fb.textContent=t.correct+' · '+num(dt/1000,1)+' '+t.sec;
   else{const sol=q.showHtml?q.showHtml():esc(q.kind==='choice'?`${t.graphWord} ${q.ans+1}`:q.show?q.show():num(q.ans));fb.innerHTML=`${skip?t.skipped:t.wrong} <code>${sol}</code>`;
     if(q.kind==='choice'&&skip){document.querySelectorAll('.opt')[q.ans].classList.add('right')}}
-  clearTimeout(lockT);lockT=setTimeout(()=>{if(!$('v-game').hidden&&performance.now()<G_.endAt)next()},ok?380:(q.kind==='choice'?1300:1500));}
-function tick(){cancelAnimationFrame(raf);const loop=()=>{
-  if(G_.endless){$('secs').textContent=mmss((performance.now()-G_.t0)/1000);raf=requestAnimationFrame(loop);return}
-  const left=Math.max(0,G_.endAt-performance.now());
-  $('bar-i').style.transform=`scaleX(${left/(G_.dur*1000)})`;$('secs').textContent=Math.ceil(left/1000);
-  $('bar').classList.toggle('low',left<10000);if(left<=0){finish();return}raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop)}
+  clearTimeout(lockT);
+  if(G_.done){lockT=setTimeout(finish,400);return}
+  lockT=setTimeout(()=>{if(!$('v-game').hidden&&performance.now()<G_.endAt)next()},ok?380:(q.kind==='choice'?1300:1500));}
+function tick(){cancelAnimationFrame(raf);const loop=()=>{const now=performance.now();
+  if(G_.gm==='endless'){$('secs').textContent=mmss((now-G_.t0)/1000);raf=requestAnimationFrame(loop);return}
+  if(G_.gm==='sprint'){$('secs').textContent=fmtSec((now-G_.t0)/1000);$('bar-i').style.transform=`scaleX(${G_.ok/SPRINT})`;raf=requestAnimationFrame(loop);return}
+  const left=Math.max(0,G_.endAt-now),full=G_.gm==='bonus'?Math.max(G_.peak,left):G_.dur*1000;
+  $('bar-i').style.transform=`scaleX(${left/full})`;$('secs').textContent=Math.ceil(left/1000);
+  $('bar').classList.toggle('low',left<(G_.gm==='bonus'?5000:10000));if(left<=0){finish();return}raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop)}
 function stop(){cancelAnimationFrame(raf);clearTimeout(lockT);G_.q=null}
-function finish(){const endless=G_.endless;const dur=endless?Math.max(1,Math.round((performance.now()-G_.t0)/1000)):G_.dur;stop();
-  const key=G_.mode;const pace=G_.ok/dur*60;
-  const LV=S.lv[G_.diff];for(const [d,p] of Object.entries(G_.per))for(const s of [S.disc[d],LV.disc[d]]){s.n+=p.n;s.ok+=p.ok;s.tOk+=p.tOk}
+function finish(){if(G_.over)return;G_.over=true;
+  const now=performance.now(),gm=G_.gm,elapsed=(now-G_.t0)/1000,dur=gm==='cd'?G_.dur:Math.max(1,Math.round(elapsed));stop();
+  const key=G_.mode,diff=G_.diff,pace=G_.ok/(gm==='cd'?G_.dur:Math.max(1,elapsed))*60;
+  const LV=S.lv[diff];for(const [d,p] of Object.entries(G_.per))for(const s of [S.disc[d],LV.disc[d]]){s.n+=p.n;s.ok+=p.ok;s.tOk+=p.tOk}
   S.nRounds++;S.secs+=dur;LV.rounds++;LV.secs+=dur;
-  const prev=(S.best[key]||{})[G_.diff];const isBest=!endless&&G_.ok>0&&(prev==null||pace>prev+1e-9);
-  if(isBest){S.best[key]=S.best[key]||{};S.best[key][G_.diff]=Math.round(pace*10)/10}
-  if(endless){S.streak[key]=Math.max(S.streak[key]||0,G_.maxStreak);LV.streak[key]=Math.max(LV.streak[key]||0,G_.maxStreak)}
-  S.rounds.unshift({t:Date.now(),mode:key,discs:G_.discs,dur,endless,diff:G_.diff,ok:G_.ok,n:G_.n});S.rounds=S.rounds.slice(0,40);persist();
-  last={mode:key,discs:G_.discs,dur,endless,maxStreak:G_.maxStreak,diff:G_.diff,ok:G_.ok,n:G_.n,per:JSON.parse(JSON.stringify(G_.per)),pace,isBest};
+  S.log.push(...G_.log);if(S.log.length>LOGMAX)S.log.splice(0,S.log.length-LOGMAX);
+  let isBest=false,time=null;
+  if(gm==='cd'){const prev=recVal('cd',key,diff);isBest=G_.ok>0&&(prev==null||pace>prev+1e-9);if(isBest){S.best[key]=S.best[key]||{};S.best[key][diff]=Math.round(pace*10)/10}}
+  else if(gm==='endless'){const prev=LV.streak[key]||0;isBest=G_.maxStreak>prev;S.streak[key]=Math.max(S.streak[key]||0,G_.maxStreak);LV.streak[key]=Math.max(prev,G_.maxStreak)}
+  else if(gm==='bonus'){const prev=recVal('bonus',key,diff);isBest=G_.ok>0&&(prev==null||G_.ok>prev);if(isBest)recSet('bonus',key,diff,G_.ok)}
+  else if(G_.ok>=SPRINT){time=Math.round(elapsed*10)/10;const prev=recVal('sprint',key,diff);isBest=prev==null||time<prev;if(isBest)recSet('sprint',key,diff,time)}
+  const rec={t:Date.now(),mode:key,discs:G_.discs,dur,gm,diff,ok:G_.ok,n:G_.n};if(time!=null)rec.time=time;
+  S.rounds.unshift(rec);S.rounds=S.rounds.slice(0,200);persist();
+  last={mode:key,discs:G_.discs,dur,gm,time,maxStreak:G_.maxStreak,diff,ok:G_.ok,n:G_.n,per:JSON.parse(JSON.stringify(G_.per)),pace,isBest};
   renderResult(last);show('result');$('again').focus({preventScroll:true});}
-function renderResult(r){const t=T();$('r-mode').textContent=`${t.d[r.mode]} · ${durLabel(r.dur,r.endless)} · ${t[r.diff]}`;
-  $('r-score').textContent=r.ok;$('r-sub').textContent=`${t.correctCol}: ${r.ok} ${t.of} ${r.n} ${t.answered}`;$('r-best').hidden=!r.isBest;
+function renderResult(r){const t=T(),gm=r.gm;
+  $('r-mode').textContent=`${t.d[r.mode]} · ${gm==='cd'?t.gmn.cd+' '+r.dur+' '+t.sec:t.gmn[gm]} · ${t[r.diff]}`;
+  let big=String(r.ok),sub=`${t.correctCol}: ${r.ok} ${t.of} ${r.n} ${t.answered}`;
+  if(gm==='sprint'){if(r.time!=null){big=fmtSec(r.time);sub=t.sprintDone.replace('{t}',fmtSec(r.time))}else{big=`${r.ok}/${SPRINT}`;sub=t.sprintOpen}}
+  if(gm==='bonus')sub=t.bonusSub.replace('{t}',mmss(r.dur));
+  $('r-score').textContent=big;$('r-sub').textContent=sub;$('r-best').hidden=!r.isBest;
   const tOk=Object.values(r.per).reduce((a,p)=>a+p.tOk,0);
-  $('r-kpis').innerHTML=kpis([[t.accuracy,r.n?Math.round(r.ok/r.n*100)+' %':'–'],[t.avgTime,r.ok?num(tOk/r.ok/1000,1)+' '+t.sec:'–'],[t.pace,num(Math.round(r.pace*10)/10)],r.endless?[t.bestStreak,r.maxStreak]:[t.questions,r.n]]);
+  const k4=gm==='endless'?[t.bestStreak,r.maxStreak]:gm==='bonus'?[t.lasted,mmss(r.dur)]:[t.questions,r.n];
+  $('r-kpis').innerHTML=kpis([[t.accuracy,r.n?Math.round(r.ok/r.n*100)+' %':'–'],[t.avgTime,r.ok?num(tOk/r.ok/1000,1)+' '+t.sec:'–'],[t.pace,num(Math.round(r.pace*10)/10)],k4]);
   const rows=DISC.filter(d=>r.per[d]).map(d=>{const p=r.per[d];return [t.d[d],p.n,p.ok,p.n?Math.round(p.ok/p.n*100):0,p.ok?p.tOk/p.ok:null]});
   $('r-table').innerHTML=rows.length?table([t.discipline,t.questions,t.correctCol,t.accuracy,t.avgTime],rows.map(x=>[esc(x[0]),x[1],x[2],accCell(x[3]),x[4]!=null?num(x[4]/1000,1)+' '+t.sec:'–'])):'';}
 const kpis=a=>a.map(([l,v])=>`<div class="kpi"><span class="label">${esc(l)}</span><strong>${v}</strong></div>`).join('');
 const accCell=p=>`<span class="acc"><span class="track"><i style="width:${p}%"></i></span>${p} %</span>`;
 function table(h,rows){return `<table><thead><tr>${h.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>r.grp?`<tr class="grp"><td colspan="${h.length}">${esc(r.grp)}</td></tr>`:`<tr>${r.map((c,i)=>`<td${c==='–'&&i?' class="dim"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
 
+/* ---------- statistics ---------- */
+function logFor(sel,disc){const l=sel==='all'?null:sel[0];return S.log.filter(e=>(!l||e.l===l)&&(!disc||disc==='all'||e.d===disc))}
+const rpmOf=es=>{let c=0,ms=0;for(const e of es){ms+=e.ms;c+=e.ok}return ms?c*60000/ms:null};
+const avgOk=es=>{let c=0,ms=0;for(const e of es)if(e.ok){c++;ms+=e.ms}return c?ms/c:null};
+function trendPts(es,metric){const by=new Map();for(const e of es){let g=by.get(e.r);if(!g){g={t:e.t,es:[]};by.set(e.r,g)}g.es.push(e);g.t=e.t}
+  const pts=[];for(const g of by.values()){if(g.es.length<2)continue;const v=metric==='rpm'?rpmOf(g.es):avgOk(g.es);if(v==null)continue;pts.push({t:g.t,v:metric==='rpm'?v:v/1000})}
+  return pts.sort((a,b)=>a.t-b.t).slice(-30)}
+const movAvg=(v,w)=>v.map((_,i)=>{const s=v.slice(Math.max(0,i-w+1),i+1);return s.reduce((a,b)=>a+b,0)/s.length});
+function niceMax(v){if(!(v>0))return 1;const p=Math.pow(10,Math.floor(Math.log10(v)));for(const m of [1,1.5,2,2.5,3,4,5,6,8,10])if(m*p>=v-1e-9)return m*p;return 10*p}
+function trendMsg(es,metric){const t=T(),now=Date.now(),D=86400000;
+  const rec=es.filter(e=>e.t>now-14*D),prev=es.filter(e=>e.t<=now-14*D&&e.t>now-28*D);let a,b,ref;
+  if(rec.length>=10&&prev.length>=10){a=prev;b=rec;ref=t.refWeeks}
+  else{const rids=[...new Set(es.map(e=>e.r))];if(rids.length<6)return {txt:t.tFew,cls:''};
+    const f=new Set(rids.slice(0,3)),l=new Set(rids.slice(-3));a=es.filter(e=>f.has(e.r));b=es.filter(e=>l.has(e.r));ref=t.refFirst}
+  let p;if(metric==='rpm'){const x=rpmOf(a),y=rpmOf(b);if(!x||!y)return {txt:t.tFew,cls:''};p=Math.round((y/x-1)*100)}
+  else{const x=avgOk(a),y=avgOk(b);if(!x||!y)return {txt:t.tFew,cls:''};p=Math.round((1-y/x)*100)}
+  if(Math.abs(p)<3)return {txt:t.tSame,cls:''};
+  const key=metric==='rpm'?(p>0?'tMore':'tLess'):(p>0?'tFaster':'tSlower');
+  return {txt:t[key].replace('{p}',Math.abs(p)).replace('{ref}',ref),cls:p>0?'good':'bad',up:p>0}}
+let trendGeo=null;
+function lineChart(pts,metric){const W=320,H=180,L=38,Rr=10,Tp=14,B=24,t=T();
+  const vals=pts.map(p=>p.v),tr=movAvg(vals,5),mx=niceMax(Math.max(...vals,...tr)*1.08),n=pts.length;
+  const X=i=>L+(W-L-Rr)*(n===1?0.5:i/(n-1)),Y=v=>Tp+(H-Tp-B)*(1-v/mx);
+  const fmt=v=>num(Math.round(v*10)/10);
+  let g='';for(const f of [0,.5,1]){const y=Y(mx*f).toFixed(1);g+=`<line class="cg" x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}"/><text class="ct" x="${L-6}" y="${(+y+3).toFixed(1)}" text-anchor="end">${fmt(mx*f)}</text>`}
+  const path=a=>a.map((v,i)=>`${i?'L':'M'}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join('');
+  const dots=vals.map((v,i)=>`<circle class="cdot" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.2"/>`).join('');
+  const xl=`<text class="ct" x="${X(0).toFixed(1)}" y="${H-6}" text-anchor="${n===1?'middle':'start'}">${fmtDay(pts[0].t)}</text>`+(n>1?`<text class="ct" x="${X(n-1).toFixed(1)}" y="${H-6}" text-anchor="end">${fmtDay(pts[n-1].t)}</text>`:'');
+  trendGeo={pts:pts.map((p,i)=>({x:X(i),y:Y(p.v),p})),W,L,Rr,unit:metric==='rpm'?t.perMin:t.sec,fmt};
+  const lbl=`${metric==='rpm'?t.mRpm:t.mTime}: ${fmt(vals[0])} → ${fmt(vals[n-1])}`;
+  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lbl)}"><text class="ct" x="${L}" y="9">${metric==='rpm'?t.perMin:t.sec}</text>${g}<path class="craw" d="${path(vals)}"/>${n>1?`<path class="ctrend" d="${path(tr)}"/>`:''}${dots}${xl}<g class="chl" style="display:none"><line class="chv" y1="${Tp}" y2="${H-B}"/><circle class="chd" r="5"/></g><rect x="${L-10}" y="0" width="${W-L-Rr+20}" height="${H}" fill="transparent"/></svg>`}
+function bindTrendHover(){const svg=$('tr-chart').querySelector('svg');if(!svg||!trendGeo)return;const g=trendGeo,hl=svg.querySelector('.chl'),ln=hl.querySelector('line'),dt=hl.querySelector('circle'),out=$('tr-read');
+  const def=()=>{const p=g.pts[g.pts.length-1];out.textContent=`${fmtDay(p.p.t)} · ${g.fmt(p.p.v)} ${g.unit}`};def();
+  const mv=e=>{const r=svg.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*g.W;let best=0;g.pts.forEach((p,i)=>{if(Math.abs(p.x-x)<Math.abs(g.pts[best].x-x))best=i});
+    const p=g.pts[best];hl.style.display='';ln.setAttribute('x1',p.x);ln.setAttribute('x2',p.x);dt.setAttribute('cx',p.x);dt.setAttribute('cy',p.y);out.textContent=`${fmtDay(p.p.t)} · ${g.fmt(p.p.v)} ${g.unit}`};
+  svg.addEventListener('pointermove',mv);svg.addEventListener('pointerdown',mv);svg.addEventListener('pointerleave',()=>{hl.style.display='none';def()})}
+function histChart(ms){const W=320,H=150,L=6,Rr=6,Tp=18,B=22,t=T();
+  const s=ms.map(x=>x/1000).sort((a,b)=>a-b),q=p=>s[Math.min(s.length-1,Math.floor(p*(s.length-1)))];
+  const med=q(.5),hi=niceMax(Math.max(q(.95)*1.15,med*2.2)),nb=12,bw=hi/nb,bins=new Array(nb).fill(0);
+  for(const v of s)bins[Math.min(nb-1,Math.floor(v/bw))]++;const mc=Math.max(...bins);
+  const X=v=>L+(W-L-Rr)*v/hi,Y=c=>Tp+(H-Tp-B)*(1-c/mc);
+  const bars=bins.map((c,i)=>c?`<rect class="hbar" x="${(X(i*bw)+1).toFixed(1)}" y="${Y(c).toFixed(1)}" width="${(X(bw)-L-2).toFixed(1)}" height="${(H-B-Y(c)).toFixed(1)}" rx="2"><title>${num(i*bw,1)}–${num((i+1)*bw,1)} ${t.sec}: ${c}</title></rect>`:'').join('');
+  const mx=X(med).toFixed(1),mlbl=t.histMed.replace('{t}',num(med,1)+' '+t.sec),anchor=med>hi*0.7?'end':'start',dx=anchor==='end'?-4:4;
+  const xl=[0,hi/2,hi].map((v,i)=>`<text class="ct" x="${X(v).toFixed(1)}" y="${H-6}" text-anchor="${['start','middle','end'][i]}">${num(v,1)}${i===2?'+':''} ${t.sec}</text>`).join('');
+  return {svg:`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(mlbl)}"><line class="hbase" x1="${L}" x2="${W-Rr}" y1="${H-B}" y2="${H-B}"/>${bars}<line class="hmed" x1="${mx}" x2="${mx}" y1="${Tp-4}" y2="${H-B}"/><text class="ct strong" x="${(+mx+dx).toFixed(1)}" y="${Tp-6}" text-anchor="${anchor}">${esc(mlbl)}</text>${xl}</svg>`,
+    slow:Math.round(s.filter(v=>v>2*med).length/s.length*100)}}
+function errLabel(g){const t=T();let m=/^x(\d+)$/.exec(g);if(m)return t.rowMul.replace('{n}',m[1]);m=/^d(\d+)$/.exec(g);if(m)return t.rowDiv.replace('{n}',m[1]);return t.errs[g]||g}
 function renderStats(){const t=T();const sel=P.statsLv||P.diff;const all=sel==='all';
   $('seg-slv').innerHTML=[...DIFFS,'all'].map(d=>`<button data-slv="${d}" aria-pressed="${sel===d}">${d==='all'?t.allLevels:t[d]}</button>`).join('');
   const src=all?S.disc:S.lv[sel].disc;const rounds=all?S.rounds:S.rounds.filter(x=>x.diff===sel);
   const nR=all?S.nRounds:S.lv[sel].rounds,secs=all?S.secs:S.lv[sel].secs;
   const tot=DISC.reduce((a,d)=>{a.n+=src[d].n;a.ok+=src[d].ok;return a},{n:0,ok:0});
   $('s-kpis').innerHTML=kpis([[t.rounds,nR],[t.totalQ,tot.n],[t.totalAcc,tot.n?Math.round(tot.ok/tot.n*100)+' %':'–'],[t.totalTime,secs>=60?Math.round(secs/60)+' '+t.min:secs+' '+t.sec]]);
-  const best=k=>{const b=S.best[k]||{};if(!all)return b[sel];const v=DIFFS.map(df=>b[df]).filter(x=>x!=null);return v.length?Math.max(...v):null};
-  const st=k=>(all?S.streak[k]:S.lv[sel].streak[k])||'–';
-  const keys=[...GROUPS.flatMap(([g,ks])=>[{grp:t.g[g]},...ks]),{grp:t.d.mix},'mix'];
-  $('s-table').innerHTML=table(['',t.th.n,t.th.acc,t.th.time,t.th.pace,t.th.streak],keys.map(d=>{
-    if(typeof d==='object')return d;const b=best(d);if(d==='mix')return [esc(t.ds.mix),'–','–','–',b!=null?num(b):'–',st(d)];
-    const s=src[d];const acc=s.n?Math.round(s.ok/s.n*100):null;
-    return [esc(t.ds[d]),s.n||'–',acc!=null?accCell(acc):'–',s.ok?num(s.tOk/s.ok/1000,1)+' '+t.sec:'–',b!=null?num(b):'–',st(d)]}));
-  $('s-note').textContent=(all?t.noteAll:t.noteLv.replace('{lv}',t[sel]))+(S.legacy&&!all?' '+t.legacyNote:'');
+  /* progress */
+  if(P.trDisc!=='all'&&!DISC.includes(P.trDisc))P.trDisc='all';
+  $('tr-disc').innerHTML=['all',...DISC].map(k=>`<option value="${k}"${k===P.trDisc?' selected':''}>${k==='all'?t.allDisc:t.d[k]}</option>`).join('');
+  $('seg-metric').innerHTML=[['rpm',t.mRpm],['time',t.mTime]].map(([k,l])=>`<button data-metric="${k}" aria-pressed="${P.trMetric===k}">${l}</button>`).join('');
+  const es=logFor(sel,P.trDisc),pts=trendPts(es,P.trMetric);
+  if(pts.length<2){$('tr-chart').innerHTML=`<p class="empty">${t.trendEmpty}</p>`;$('tr-legend').hidden=true;$('tr-read').textContent='';$('tr-msg').textContent='';$('tr-msg').className='tmsg';trendGeo=null}
+  else{$('tr-legend').hidden=false;$('tr-legend').innerHTML=`<span><i class="dot"></i>${t.legRound}</span><span><i></i>${t.legTrend}</span>`;
+    $('tr-chart').innerHTML=lineChart(pts,P.trMetric);bindTrendHover();
+    const m=trendMsg(es,P.trMetric);$('tr-msg').className='tmsg '+m.cls;$('tr-msg').innerHTML=(m.cls?`<span aria-hidden="true">${m.up?'↗':'↘'}</span>`:'')+esc(m.txt)}
+  /* answer times */
+  const okMs=es.filter(e=>e.ok).slice(-400).map(e=>e.ms);
+  $('hist-for').textContent=t.histFor.replace('{d}',P.trDisc==='all'?t.allDisc:t.d[P.trDisc]);
+  if(okMs.length<10){$('hist').innerHTML=`<p class="empty">${t.histEmpty}</p>`;$('hist-msg').textContent=''}
+  else{const h=histChart(okMs);$('hist').innerHTML=h.svg;$('hist-msg').textContent=h.slow>=3?t.histSlow.replace('{p}',h.slow):t.histEven}
+  /* accuracy bars */
+  const ar=DISC.filter(d=>src[d].n>=3).map(d=>({d,n:src[d].n,p:Math.round(src[d].ok/src[d].n*100)})).sort((a,b)=>a.p-b.p||b.n-a.n);
+  $('acc-chart').innerHTML=ar.length?`<div class="hbars">${ar.map(r=>`<div class="hb" title="n = ${r.n}"><span class="hl">${esc(t.ds[r.d])}</span><span class="ht"><i style="width:${Math.max(r.p,1)}%"></i></span><span class="hv">${r.p} %</span></div>`).join('')}</div>`:`<p class="empty">${t.accEmpty}</p>`;
+  /* error analysis */
+  const lg=logFor(sel),agg=new Map(),wrongBy={};
+  for(const e of lg){if(!e.ok)wrongBy[e.d]=(wrongBy[e.d]||0)+1;if(!e.g)continue;
+    for(const g of e.g){const row=/^[xd]\d+$/.test(g),k=e.d+'|'+g;
+      if(row){const o=agg.get(k)||{d:e.d,g,n:0,w:0,row:true};o.n++;if(!e.ok)o.w++;agg.set(k,o)}
+      else if(!e.ok&&g!=='other'&&g!=='skip'){const o=agg.get(k)||{d:e.d,g,w:0};o.w++;agg.set(k,o)}}}
+  const er=[...agg.values()].filter(o=>o.row?o.w>=2&&o.n>=3:o.w>=2).map(o=>({...o,p:Math.round((o.row?o.w/o.n:o.w/(wrongBy[o.d]||1))*100)})).sort((a,b)=>b.w-a.w||b.p-a.p).slice(0,6);
+  $('err-list').innerHTML=er.length?`<div class="elist">${er.map(o=>`<div class="erow"><div class="et"><b>${esc(t.ds[o.d])}</b> · ${esc(errLabel(o.g))}</div><span class="ev">${o.row?t.errOf.replace('{w}',o.w).replace('{n}',o.n):t.errTimes.replace('{w}',o.w).replace('{p}',o.p)}</span><span class="ebar"><i style="width:${o.p}%"></i></span></div>`).join('')}</div>`:`<p class="empty">${t.errEmpty}</p>`;
+  /* overview with trend arrows */
+  const cut=Date.now()-7*86400000,arw={};
+  for(const d of DISC){const a=lg.filter(e=>e.d===d&&e.t<=cut),b=lg.filter(e=>e.d===d&&e.t>cut);if(a.length<5||b.length<5)continue;
+    const pa=a.reduce((s,e)=>s+e.ok,0)/a.length,pb=b.reduce((s,e)=>s+e.ok,0)/b.length,ta=avgOk(a),tb=avgOk(b);
+    arw[d]={acc:Math.abs(pb-pa)>=0.03?(pb>pa?1:-1):0,time:ta&&tb&&Math.abs(tb/ta-1)>=0.05?(tb<ta?1:-1):0}}
+  const arrow=(v,sym)=>v?`<span class="ar ${v>0?'good':'bad'}" title="${v>0?t.better:t.worse}" aria-label="${v>0?t.better:t.worse}">${sym[v>0?0:1]}</span>`:'';
+  const keys=GROUPS.flatMap(([g,ks])=>[{grp:t.g[g]},...ks]);
+  $('s-table').innerHTML=table(['',t.th.n,t.th.acc,t.th.time],keys.map(d=>{if(typeof d==='object')return d;
+    const s=src[d],acc=s.n?Math.round(s.ok/s.n*100):null,a=arw[d]||{};
+    return [esc(t.ds[d]),s.n||'–',acc!=null?accCell(acc)+arrow(a.acc,['↑','↓']):'–',s.ok?num(s.tOk/s.ok/1000,1)+' '+t.sec+arrow(a.time,['↓','↑']):'–']}));
+  $('s-note').textContent=t.arrowsNote+(S.legacy&&!all?' '+t.legacyNote:'');
+  /* records */
+  const rk=[...DISC,'mix','weak'].map(k=>{const v=['cd','endless','sprint','bonus'].map(g=>recVal(g,k,sel));return {k,v}}).filter(r=>r.v.some(x=>x!=null));
+  $('s-recs').innerHTML=rk.length?table(['',t.thR.pace,t.thR.streak,t.thR.sprint,t.thR.bonus],rk.map(r=>[esc(t.ds[r.k]),r.v[0]!=null?num(r.v[0]):'–',r.v[1]!=null?r.v[1]:'–',r.v[2]!=null?fmtSec(r.v[2]):'–',r.v[3]!=null?r.v[3]:'–'])):`<p class="empty">${t.recsEmpty}</p>`;
+  $('recs-note').textContent=rk.length?t.recsNote:'';
+  /* coin drop & rounds */
   const dd=all?S.drop:S.drop.lv[sel];const db=all?(()=>{const v=DIFFS.map(df=>S.drop.best[df]).filter(x=>x!=null);return v.length?Math.max(...v):null})():S.drop.best[sel];
   $('s-drop').innerHTML=kpis([[t.dRuns,dd.runs],[t.dCoins,dd.coins],[t.dPerfect,dd.perfect],[t.dBest,db!=null?db:'–']]);
   const fmtD=ts=>new Date(ts).toLocaleString(P.lang==='de'?'de-DE':'en-US',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  $('s-rounds').innerHTML=rounds.length?rounds.slice(0,10).map(r=>`<div class="rnd"><div><div>${esc(t.d[r.mode]||r.mode)} <span class="small">· ${durLabel(r.dur,r.endless)}${all?' · '+t[r.diff]:''}</span></div><div class="when">${fmtD(r.t)}</div></div><span class="s">${r.ok}</span><span class="a">${r.n?Math.round(r.ok/r.n*100):0} %</span></div>`).join(''):`<p class="small" style="margin:0">${t.noRounds}</p>`;
+  $('s-rounds').innerHTML=rounds.length?rounds.slice(0,10).map(r=>`<div class="rnd"><div><div>${esc(t.d[r.mode]||r.mode)} <span class="small">· ${durLabel(r)}${all?' · '+t[r.diff]:''}</span></div><div class="when">${fmtD(r.t)}</div></div><span class="s">${r.ok}</span><span class="a">${r.n?Math.round(r.ok/r.n*100):0} %</span></div>`).join(''):`<p class="small" style="margin:0">${t.noRounds}</p>`;
   $('reset-confirm').hidden=true;$('reset').hidden=false;}
 
 /* ---------- Coin Drop: expression parser ---------- */
@@ -850,43 +1289,80 @@ function compileFn(src){
   if(!okPts)throw 0;return f}
 
 /* ---------- Coin Drop: game ---------- */
-const DW=10,GRAV=-22,BR=0.36,CR=0.5,MAXF=6,SUBN='₀₁₂₃₄₅₆₇₈₉';
+const DW=10,GRAV=-22,BR=0.36,CR=0.5,MAXF=6,SUBN='₀₁₂₃₄₅₆₇₈₉',PEG=0.45,BARW=0.14;
 const D_={lvl:null,levelNo:0,fns:[],lines:[],segs:[],balls:[],state:'edit',raf:0,hover:null,t:0,res:null};
-const rampItem=r=>({fn:x=>r.m*x+r.b,a:r.a,b:r.e,ci:0});
 function newBall(x,delay){return {x,y:DW-0.6,vx:0,vy:0,delay,on:delay<=0,out:false,rest:false,still:0,trail:[]}}
+/* A moving coin oscillates around its base point; position depends only on the run time t. */
+function coinPos(c,t){if(!c.mv)return [c.x,c.y];const s=c.mv.a*Math.sin(c.mv.w*t+c.mv.ph);return c.mv.ax==='x'?[c.x+s,c.y]:[c.x,c.y+s]}
 function simulate(x0,segs,coins){const b=newBall(x0,0),traj=[],h=1/240;let t=0,n=0;
-  while(t<20&&!b.out&&!b.rest){t+=h;stepBall(b,segs,h,coins,t);if(n++%4===0)traj.push([b.x,b.y])}return traj}
+  while(t<20&&!b.out&&!b.rest){t+=h;stepBall(b,segs,h,coins,t);if(n++%4===0)traj.push([b.x,b.y,t])}return traj}
+function segBox(s){const r=BR+(s.r||0);s.minx=Math.min(s.x1,s.x2)-r;s.maxx=Math.max(s.x1,s.x2)+r;s.miny=Math.min(s.y1,s.y2)-r;s.maxy=Math.max(s.y1,s.y2)+r;return s}
+function obstSegs(obst){return (obst||[]).map(o=>o.type==='peg'?segBox({x1:o.x,y1:o.y,x2:o.x,y2:o.y,r:PEG,ob:1}):segBox({x1:o.x1,y1:o.y1,x2:o.x2,y2:o.y2,r:BARW,ob:1}))}
+function dSeg(px,py,s){const dx=s.x2-s.x1,dy=s.y2-s.y1,L2=dx*dx+dy*dy;let u=L2?((px-s.x1)*dx+(py-s.y1)*dy)/L2:0;u=Math.max(0,Math.min(1,u));return Math.hypot(px-s.x1-u*dx,py-s.y1-u*dy)}
+/* One piece of the hidden reference solution: descends along dir from the landing point (ax, ay). */
+function mkPiece(kind,ax,ay,dir){const len=R(4,7);let fn,lo,hi,endX;
+  if(kind==='parab'){const H=R(3,6)/2,xe=ax+dir*len,a=H/(len*len);fn=x=>ay-H+a*(x-xe)*(x-xe);lo=dir>0?ax-1:xe;hi=dir>0?xe:ax+1;endX=xe}
+  else if(kind==='trig'){const A=R(2,4)/2,Pp=len/0.65,xs=ax-dir*0.35*Pp,c=ay-A*Math.cos(0.35*Math.PI);fn=x=>c+A*Math.cos(Math.PI*(x-xs)/Pp);endX=xs+dir*Pp;lo=dir>0?ax-1:endX;hi=dir>0?endX:ax+1}
+  else{const m=-dir*pick([0.25,0.35,0.5,0.6,0.75]);fn=x=>ay+m*(x-ax);lo=dir>0?ax-1:ax-len;hi=dir>0?ax+len:ax+1;endX=dir>0?hi:lo}
+  lo=Math.max(-9.5,lo);hi=Math.min(9.5,hi);if(hi-lo<3)return null;endX=Math.max(lo,Math.min(hi,endX));return {fn,a:lo,b:hi,endX,ci:0}}
 function genLevel(d){const nr=d==='easy'?1:d==='normal'?2:3,nc=d==='easy'?3:d==='normal'?4:5;
-  for(let att=0;att<400;att++){const x0=R(-6,6);let dir=x0===0?pick([1,-1]):(x0>0?-1:1);if(Math.random()<.25)dir=-dir;
-    const ramps=[];let ax=x0,ay=R(2,5),ok=true;
-    for(let r=0;r<nr;r++){const m=-dir*pick([0.25,0.35,0.5,0.6,0.75]),len=R(4,7);
-      const x1=Math.max(-9.5,dir>0?ax-1:ax-len),x2=Math.min(9.5,dir>0?ax+len:ax+1);if(x2-x1<3){ok=false;break}
-      const bb=ay-m*ax;ramps.push({m,b:bb,a:x1,e:x2});
-      if(r<nr-1){const traj=simulate(x0,makeGeo(ramps.map(rampItem)).segs,[]);const endX=dir>0?x2:x1,endY=m*endX+bb,drop=R(2,4);
-        const pt=traj.find(q=>(dir>0?q[0]>endX+0.3:q[0]<endX-0.3)&&q[1]<endY-drop);
+  const kind=pick(d==='easy'?['free','free','line']:d==='normal'?['free','line','parab','trig']:['free','parab','trig','line']);
+  const pk=kind==='parab'||kind==='trig'?kind:'line';
+  const nObs=d==='easy'?pick([0,0,1]):d==='normal'?R(1,2):R(2,3);
+  const moving=d!=='easy'&&rnd()<(d==='normal'?.3:.5);
+  for(let att=0;att<400;att++){const x0=R(-6,6);let dir=x0===0?pick([1,-1]):(x0>0?-1:1);if(rnd()<.25)dir=-dir;
+    const pcs=[];let ax=x0,ay=R(2,5),ok=true;
+    for(let r=0;r<nr;r++){const pc=mkPiece(pk,ax,ay,dir);if(!pc){ok=false;break}pcs.push(pc);
+      if(r<nr-1){const traj=simulate(x0,makeGeo(pcs).segs,[]);const endY=pc.fn(pc.endX),drop=R(2,4);
+        const pt=traj.find(q=>(dir>0?q[0]>pc.endX+0.3:q[0]<pc.endX-0.3)&&q[1]<endY-drop);
         if(!pt||pt[1]<-5.5||Math.abs(pt[0])>8){ok=false;break}ax=pt[0];ay=pt[1]-0.3;dir=-dir}}
     if(!ok)continue;
-    const segs=makeGeo(ramps.map(rampItem)).segs;const traj=simulate(x0,segs,[]);
+    const segs=makeGeo(pcs).segs,traj=simulate(x0,segs,[]);
     const cand=traj.filter(q=>q[1]<DW-3&&q[1]>-9&&Math.abs(q[0])<9.5&&Math.abs(q[0]-x0)>1.3);if(cand.length<nc*6)continue;
     const cum=[0];for(let i=1;i<cand.length;i++)cum.push(cum[i-1]+Math.min(1,Math.hypot(cand[i][0]-cand[i-1][0],cand[i][1]-cand[i-1][1])));
-    const L=cum[cum.length-1];const coins=[];
-    for(let k=0;k<nc;k++){const tg=L*(k+0.5)/nc;const q=cand[Math.max(0,cum.findIndex(c=>c>=tg))];
-      const c={x:Math.round(q[0]*2)/2,y:Math.round(q[1]*2)/2};if(coins.some(o=>Math.hypot(o.x-c.x,o.y-c.y)<2))continue;coins.push(c)}
+    const L=cum[cum.length-1],coins=[];
+    for(let k=0;k<nc;k++){const tg=L*(k+0.5)/nc,q=cand[Math.max(0,cum.findIndex(c=>c>=tg))];let c;
+      if(moving&&k%2===1){const mv={ax:pick(['x','y']),a:R(3,6)/4,w:2*Math.PI/pick([2.5,3,3.5,4]),ph:rnd()*2*Math.PI},s=mv.a*Math.sin(mv.w*q[2]+mv.ph);
+        c=mv.ax==='x'?{x:q[0]-s,y:q[1],mv}:{x:q[0],y:q[1]-s,mv};
+        if(Math.abs(c.x)+(mv.ax==='x'?mv.a:0)>9.4||Math.abs(c.y)+(mv.ax==='y'?mv.a:0)>9.4)c={x:Math.round(q[0]*2)/2,y:Math.round(q[1]*2)/2}}
+      else c={x:Math.round(q[0]*2)/2,y:Math.round(q[1]*2)/2};
+      if(coins.some(o=>Math.hypot(o.x-c.x,o.y-c.y)<2))continue;coins.push(c)}
     if(coins.length<nc)continue;
-    const test=coins.map(c=>({x:c.x,y:c.y}));simulate(x0,segs,test);if(!test.every(c=>c.got))continue;
-    return {spawns:[x0],coins,par:ramps.length,diff:d,ref:ramps}}
+    /* obstacles sit near the reference path but never on it, so the level stays solvable */
+    const obst=[];
+    for(let tries=0;tries<300&&obst.length<nObs;tries++){const type=pick(['peg','peg','bar']);let o,pts;
+      const x=R(-8,8)+pick([0,.5]),y=R(-8,7)+pick([0,.5]);
+      if(type==='peg'){o={type,x,y};pts=[[x,y]]}else{const an=pick([0,0.35,-0.35,0.8,-0.8,Math.PI/2]),h=1.2;o={type,x1:x-h*Math.cos(an),y1:y-h*Math.sin(an),x2:x+h*Math.cos(an),y2:y+h*Math.sin(an)};pts=[[o.x1,o.y1],[x,y],[o.x2,o.y2]]}
+      const sg=obstSegs([o])[0],dT=Math.min(...traj.map(q=>dSeg(q[0],q[1],sg)));
+      if(dT<1.5||dT>4)continue;
+      if(coins.some(c=>{const [a,b]=coinPos(c,0);return dSeg(c.x,c.y,sg)<1.4||dSeg(a,b,sg)<1.4||(c.mv&&dSeg(c.mv.ax==='x'?c.x+c.mv.a:c.x,c.mv.ax==='y'?c.y+c.mv.a:c.y,sg)<1.4)||(c.mv&&dSeg(c.mv.ax==='x'?c.x-c.mv.a:c.x,c.mv.ax==='y'?c.y-c.mv.a:c.y,sg)<1.4)}))continue;
+      if(segs.some(s=>pts.some(p=>dSeg(p[0],p[1],s)<1)))continue;
+      if(obstSegs(obst).some(s=>pts.some(p=>dSeg(p[0],p[1],s)<2)))continue;
+      if(Math.abs(x-x0)<1.2&&y>4)continue;
+      obst.push(o)}
+    const test=coins.map(c=>({...c,got:false}));simulate(x0,segs.concat(obstSegs(obst)),test);if(!test.every(c=>c.got))continue;
+    return {spawns:[x0],coins,par:pcs.length,diff:d,kind,obst,ref:pcs.map(p=>({a:p.a,b:p.b}))}}
   return null}
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function setLevel(lvl,count){D_.lvl=lvl;if(count)D_.levelNo++;D_.fns=[{src:'',a:'',b:''}];resetRun();renderFns();rebuild();updateBar()}
 function newLevel(){const d=P.diff;let lvl=genLevel(d);
-  if(!lvl){const x0=R(-5,5),coins=[];while(coins.length<3){const x=x0+pick([-4,-3,3,4]),y=R(-6,2);if(!coins.some(c=>Math.hypot(c.x-x,c.y-y)<2))coins.push({x,y})}lvl={spawns:[x0],coins,par:null,diff:d}}
-  D_.lvl=lvl;D_.levelNo++;D_.fns=[{src:'',a:'',b:''}];resetRun();renderFns();rebuild();}
-function resetRun(){cancelAnimationFrame(D_.raf);D_.state='edit';D_.balls=[];D_.res=null;
-  if(D_.lvl)D_.lvl.coins.forEach(c=>{c.got=false;c.gt=0});$('d-res').hidden=true;setEditing(true);updateBar();draw();}
+  if(!lvl){const x0=R(-5,5),coins=[];while(coins.length<3){const x=x0+pick([-4,-3,3,4]),y=R(-6,2);if(!coins.some(c=>Math.hypot(c.x-x,c.y-y)<2))coins.push({x,y})}lvl={spawns:[x0],coins,par:null,diff:d,kind:'free',obst:[]}}
+  setLevel(lvl,true)}
+function dailyLevel(){const day=dayKey(Date.now()),d=P.diff;const lvl=seeded(hashStr('blitz|'+day+'|'+d),()=>genLevel(d));if(!lvl)return false;lvl.daily=day;setLevel(lvl,false);return true}
+function resetRun(){cancelAnimationFrame(D_.raf);D_.state='edit';D_.balls=[];D_.res=null;D_.t=0;
+  if(D_.lvl)D_.lvl.coins.forEach(c=>{c.got=false;c.gt=0;c.gp=null});$('d-res').hidden=true;setEditing(true);updateBar();draw();}
 function setEditing(on){document.querySelectorAll('#d-fns input,#d-fns button,#d-add').forEach(el=>el.disabled=!on);
-  $('d-start').textContent=on||D_.state!=='run'?T().dropGo:T().dropStop;$('d-new').disabled=D_.state==='run';}
+  $('d-start').textContent=on||D_.state!=='run'?T().dropGo:T().dropStop;$('d-new').disabled=D_.state==='run';$('d-daily').disabled=D_.state==='run';}
 function domainOf(f){const a=f.a.trim()?parse(f.a):-DW-0.5,b=f.b.trim()?parse(f.b):DW+0.5;return [a,b]}
-function checkFn(f){f.err='';f.fn=null;if(!f.src.trim())return;
-  try{f.fn=compileFn(f.src)}catch(e){f.err=T().errSyntax;return}
-  const [a,b]=domainOf(f);if(isNaN(a)||isNaN(b)){f.err=T().errSyntax;f.fn=null;return}if(a>=b){f.err=T().errDomain;f.fn=null}}
+/* Level rules are checked numerically: lines have zero second differences, parabolas zero third differences. */
+function fitsRule(f,rule){if(rule==='trig')return /sin|cos/i.test(f.src);
+  const g=f.fn;for(const x of [-4.3,-1.1,0.7,2.9]){const v=[g(x-1),g(x),g(x+1),g(x+2)];if(v.some(z=>!isFinite(z)))return false;
+    const sc=1e-6*(1+Math.abs(v[1]));if(rule==='line'&&Math.abs(v[0]-2*v[1]+v[2])>sc)return false;if(rule==='parab'&&Math.abs(v[3]-3*v[2]+3*v[1]-v[0])>sc*10)return false}
+  if(rule==='parab'&&Math.abs(g(-1)-2*g(0)+g(1))<1e-9)return false;return true}
+function checkFn(f){const t=T();f.err='';f.fn=null;if(!f.src.trim())return;
+  try{f.fn=compileFn(f.src)}catch(e){f.err=t.errSyntax;return}
+  const [a,b]=domainOf(f);if(isNaN(a)||isNaN(b)){f.err=t.errSyntax;f.fn=null;return}if(a>=b){f.err=t.errDomain;f.fn=null;return}
+  const rule=D_.lvl&&D_.lvl.kind;if(rule&&rule!=='free'&&!fitsRule(f,rule)){f.err=t.ruleErr[rule];f.fn=null}}
 function makeGeo(items){const lines=[],segs=[];
   items.forEach(it=>{const a=Math.max(it.a,-DW-0.5),b=Math.min(it.b,DW+0.5);if(a>=b)return;
     const N=Math.max(8,Math.ceil((b-a)*40));let cur=null;const close=()=>{if(cur&&cur.pts.length>1)lines.push(cur);cur=null};
@@ -895,21 +1371,22 @@ function makeGeo(items){const lines=[],segs=[];
       if(cur&&Math.abs(y-cur.pts[cur.pts.length-1][1])>4)close();
       if(!cur)cur={ci:it.ci,pts:[]};cur.pts.push([x,y])}
     close()});
-  for(const l of lines)for(let i=1;i<l.pts.length;i++){const [x1,y1]=l.pts[i-1],[x2,y2]=l.pts[i];
-    segs.push({x1,y1,x2,y2,minx:Math.min(x1,x2)-BR,maxx:Math.max(x1,x2)+BR,miny:Math.min(y1,y2)-BR,maxy:Math.max(y1,y2)+BR})}
+  for(const l of lines)for(let i=1;i<l.pts.length;i++){const [x1,y1]=l.pts[i-1],[x2,y2]=l.pts[i];segs.push(segBox({x1,y1,x2,y2}))}
   return {lines,segs}}
 function rebuild(){const items=[];D_.fns.forEach((f,ci)=>{checkFn(f);if(!f.fn)return;const [a,b]=domainOf(f);items.push({fn:f.fn,a,b,ci})});
-  const g=makeGeo(items);D_.lines=g.lines;D_.segs=g.segs;
+  const g=makeGeo(items);D_.lines=g.lines;D_.segs=g.segs.concat(obstSegs(D_.lvl&&D_.lvl.obst));
   D_.fns.forEach((f,i)=>{const row=document.querySelector(`.fn[data-i="${i}"]`);if(!row)return;row.classList.toggle('err',!!f.err);row.querySelector('.ferr').textContent=f.err;row.querySelector('.ferr').hidden=!f.err});
   updateCost();draw();}
 const usedFns=()=>D_.fns.filter(f=>f.fn).length;
 function updateCost(){const t=T(),n=D_.lvl&&D_.lvl.par;$('d-cost').textContent=(n?(n===1?t.par1:t.parN.replace('{n}',n))+' · ':'')+t.costNote;}
-function updateBar(){const t=T();if(!D_.lvl)return;const got=D_.lvl.coins.filter(c=>c.got).length;
-  $('d-title').innerHTML=`${t.dropTitle} · ${t.dLevel} <b>${D_.levelNo}</b> · ${t[D_.lvl.diff]}`;$('d-coins').textContent=`${got}/${D_.lvl.coins.length}`}
-function renderFns(){const t=T();
+function updateBar(){const t=T();if(!D_.lvl)return;const L=D_.lvl,got=L.coins.filter(c=>c.got).length;
+  $('d-title').innerHTML=L.daily?`${t.dDaily} · ${esc(fmtDay(Date.now()))} · ${t[L.diff]}`:`${t.dropTitle} · ${t.dLevel} <b>${D_.levelNo}</b> · ${t[L.diff]}`;$('d-coins').textContent=`${got}/${L.coins.length}`;
+  const parts=[];if(L.kind&&L.kind!=='free')parts.push(`<span class="badge">${esc(t.rules[L.kind])}</span>`);if(L.coins.some(c=>c.mv))parts.push(`<span>${esc(t.movingNote)}</span>`);
+  $('d-rule').innerHTML=parts.join('');$('d-rule').hidden=!parts.length}
+function renderFns(){const t=T(),rule=D_.lvl&&D_.lvl.kind,ph=rule==='trig'?'2sin(x) - 1':rule==='line'?'-0.5x + 2':'0.5x^2 - 3';
   $('d-fns').innerHTML=D_.fns.map((f,i)=>`<div class="fn" data-i="${i}"><span class="dot" style="background:var(--cv${i+1})"></span>
     <label class="fnl" for="fe${i}">f${SUBN[i+1]}(x) =</label>
-    <input class="fexpr" id="fe${i}" data-f="src" value="${esc(f.src).replace(/"/g,'&quot;')}" placeholder="${i===0?'0.5x^2 - 3':''}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+    <input class="fexpr" id="fe${i}" data-f="src" value="${esc(f.src).replace(/"/g,'&quot;')}" placeholder="${i===0?ph:''}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
     <button class="fdel" data-fdel="${i}" aria-label="Remove f${i+1}">×</button>
     <div class="fdomrow"><span>${t.xFrom}</span><input class="fdom" id="fa${i}" data-f="a" value="${esc(f.a)}" placeholder="-10" type="number" step="any" autocomplete="off"><span>${t.xTo}</span><input class="fdom" id="fb${i}" data-f="b" value="${esc(f.b)}" placeholder="10" type="number" step="any" autocomplete="off"></div>
     <div class="ferr" hidden></div></div>`).join('');
@@ -919,35 +1396,37 @@ function startRun(){if(D_.state==='run'){finishRun();return}
   if(D_.state==='done')resetRun();rebuild();
   if(D_.fns.some(f=>f.err)){$('d-warn').textContent=T().fixFns;$('d-warn').hidden=false;return}$('d-warn').hidden=true;
   const x0=D_.lvl.spawns[0];D_.balls=[0,-0.15,0.15].map((o,i)=>newBall(x0+o,i*0.7));
-  D_.state='run';D_.t=0;setEditing(false);let last=performance.now(),acc=0;const h=1/240;
-  const loop=now=>{let dt=Math.min(0.05,(now-last)/1000);last=now;acc+=dt;while(acc>=h){physics(h);acc-=h}draw();updateBar();
+  D_.state='run';D_.t=0;setEditing(false);let lastT=performance.now(),acc=0;const h=1/240;
+  const loop=now=>{let dt=Math.min(0.05,(now-lastT)/1000);lastT=now;acc+=dt;while(acc>=h){physics(h);acc-=h}draw();updateBar();
     const done=D_.balls.every(b=>b.out||b.rest)||D_.t>25;if(done){finishRun();return}D_.raf=requestAnimationFrame(loop)};
   D_.raf=requestAnimationFrame(loop);}
 function stepBall(b,segs,h,coins,t){if(b.out||b.rest)return;if(!b.on){if(t>=b.delay)b.on=true;else return}
   b.vy+=GRAV*h;b.x+=b.vx*h;b.y+=b.vy*h;
-  for(const s of segs){if(b.x<s.minx||b.x>s.maxx||b.y<s.miny||b.y>s.maxy)continue;
+  for(const s of segs){if(b.x<s.minx||b.x>s.maxx||b.y<s.miny||b.y>s.maxy)continue;const rr=BR+(s.r||0);
     const dx=s.x2-s.x1,dy=s.y2-s.y1,L2=dx*dx+dy*dy;let u=L2?((b.x-s.x1)*dx+(b.y-s.y1)*dy)/L2:0;u=Math.max(0,Math.min(1,u));
-    const cx=s.x1+u*dx,cy=s.y1+u*dy;let nx=b.x-cx,ny=b.y-cy;const d=Math.hypot(nx,ny);if(d>=BR||d<1e-9)continue;
-    nx/=d;ny/=d;b.x+=nx*(BR-d);b.y+=ny*(BR-d);const vn=b.vx*nx+b.vy*ny;
-    if(vn<0){b.vx-=1.3*vn*nx;b.vy-=1.3*vn*ny}
+    const cx=s.x1+u*dx,cy=s.y1+u*dy;let nx=b.x-cx,ny=b.y-cy;const d=Math.hypot(nx,ny);if(d>=rr||d<1e-9)continue;
+    nx/=d;ny/=d;b.x+=nx*(rr-d);b.y+=ny*(rr-d);const vn=b.vx*nx+b.vy*ny;
+    if(vn<0){const e=s.ob?1.6:1.3;b.vx-=e*vn*nx;b.vy-=e*vn*ny}
     const tx=-ny,ty=nx,vt=b.vx*tx+b.vy*ty,vn2=b.vx*nx+b.vy*ny,k=1-0.35*h;b.vx=vt*k*tx+vn2*nx;b.vy=vt*k*ty+vn2*ny}
   const sp=Math.hypot(b.vx,b.vy);if(sp>32){b.vx*=32/sp;b.vy*=32/sp}
-  for(const c of coins)if(!c.got&&Math.hypot(c.x-b.x,c.y-b.y)<BR+CR){c.got=true;c.gt=t}
+  for(const c of coins)if(!c.got){const [cx,cy]=coinPos(c,t);if(Math.hypot(cx-b.x,cy-b.y)<BR+CR){c.got=true;c.gt=t}}
   if(b.y<-DW-1||b.x<-DW-1||b.x>DW+1)b.out=true;
   if(sp<0.08){b.still+=h;if(b.still>1.2)b.rest=true}else b.still=0;
   if(!b.tc||t-b.tc>0.03){b.trail.push([b.x,b.y]);if(b.trail.length>36)b.trail.shift();b.tc=t}}
 function physics(h){D_.t+=h;for(const b of D_.balls)stepBall(b,D_.segs,h,D_.lvl.coins,D_.t)}
-function finishRun(){cancelAnimationFrame(D_.raf);D_.state='done';const t=T();
-  const coins=D_.lvl.coins.filter(c=>c.got).length,all=coins===D_.lvl.coins.length,nf=usedFns();
-  const score=Math.max(0,coins*100+(all?200:0)-nf*50);const dS=S.drop;for(const o of [dS,dS.lv[D_.lvl.diff]]){o.runs++;o.coins+=coins;if(all)o.perfect++}
-  const prev=dS.best[D_.lvl.diff];const isBest=score>0&&(prev==null||score>prev);if(isBest)dS.best[D_.lvl.diff]=score;persist();
-  D_.res={coins,all,nf,score,isBest,total:D_.lvl.coins.length};renderDropRes();setEditing(true);updateBar();draw();}
+function finishRun(){cancelAnimationFrame(D_.raf);D_.state='done';const L=D_.lvl;
+  const coins=L.coins.filter(c=>c.got).length,all=coins===L.coins.length,nf=usedFns();
+  const score=Math.max(0,coins*100+(all?200:0)-nf*50);const dS=S.drop;for(const o of [dS,dS.lv[L.diff]]){o.runs++;o.coins+=coins;if(all)o.perfect++}
+  const prev=dS.best[L.diff];const isBest=score>0&&(prev==null||score>prev);if(isBest)dS.best[L.diff]=score;
+  let daily=null;if(L.daily){if(!dS.daily||dS.daily.day!==L.daily)dS.daily={day:L.daily,best:{}};const p2=dS.daily.best[L.diff];if(p2==null||score>p2)dS.daily.best[L.diff]=score;daily=dS.daily.best[L.diff]}
+  persist();D_.res={coins,all,nf,score,isBest,total:L.coins.length,daily};renderDropRes();setEditing(true);updateBar();draw();}
 function renderDropRes(){const r=D_.res,t=T();if(!r){$('d-res').hidden=true;return}
   $('d-res').innerHTML=`<div class="row" style="justify-content:space-between;align-items:baseline"><h2>${r.all?t.perfect:t.scoreLbl+': '+r.score}</h2>${r.isBest?`<span class="badge">${t.newBest}</span>`:''}</div>
     <div class="lines"><span>${t.coinsLbl} ${r.coins}/${r.total}</span><span>+${r.coins*100}</span>
     <span>${t.allBonus}</span><span>${r.all?'+200':'0'}</span>
     <span>${t.fnsLbl} ${r.nf}</span><span>${r.nf?MINUS+r.nf*50:'0'}</span>
     <span class="tot">${t.scoreLbl}</span><span class="tot">${r.score}</span></div>
+    ${r.daily!=null?`<p class="small" style="margin:0">${t.dailyBest.replace('{n}',r.daily)}</p>`:''}
     <div class="row"><button class="cta" id="d-next">${t.nextLevel}</button><button class="ghost" id="d-retry">${t.tryAgain}</button><button class="ghost" id="d-home">${t.mainMenu}</button></div>`;
   $('d-res').hidden=false;}
 
@@ -958,24 +1437,30 @@ function sizeCanvas(){const c=$('d-canvas');if(!c||$('v-drop').hidden)return;con
 const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 function draw(){if(!dctx||!D_.lvl||$('v-drop').hidden)return;const g=dctx,S0=dS,U=S0/(2*DW),X=x=>(x+DW)*U,Y=y=>(DW-y)*U;
   const col={bg:cssv('--surface'),line:cssv('--line'),muted:cssv('--muted'),ink:cssv('--ink'),coin:cssv('--coin'),edge:cssv('--coin-edge'),acc:cssv('--accent')};
+  const mono=cssv('--f-mono')||'monospace';
   g.clearRect(0,0,S0,S0);g.fillStyle=col.bg;g.fillRect(0,0,S0,S0);
   g.lineWidth=1;g.strokeStyle=col.line;g.beginPath();for(let i=-DW+1;i<DW;i++){if(!i)continue;g.moveTo(X(i)+.5,0);g.lineTo(X(i)+.5,S0);g.moveTo(0,Y(i)+.5);g.lineTo(S0,Y(i)+.5)}g.stroke();
   g.strokeStyle=col.muted;g.lineWidth=1.4;g.beginPath();g.moveTo(X(0),0);g.lineTo(X(0),S0);g.moveTo(0,Y(0));g.lineTo(S0,Y(0));g.stroke();
-  g.fillStyle=col.muted;g.font=`600 ${Math.max(9,S0/48)}px ${cssv('--f-mono')||'monospace'}`;g.textAlign='center';g.textBaseline='top';
+  g.fillStyle=col.muted;g.font=`600 ${Math.max(9,S0/48)}px ${mono}`;g.textAlign='center';g.textBaseline='top';
   for(const v of [-8,-6,-4,-2,2,4,6,8]){g.fillText((v<0?MINUS:'')+Math.abs(v),X(v),Y(0)+3)}g.textAlign='right';g.textBaseline='middle';
   for(const v of [-8,-6,-4,-2,2,4,6,8]){g.fillText((v<0?MINUS:'')+Math.abs(v),X(0)-4,Y(v))}
-  // drop guides
   if(D_.state==='edit'){g.setLineDash([4,5]);g.strokeStyle=col.muted;g.globalAlpha=.55;g.lineWidth=1.2;g.beginPath();for(const sx of D_.lvl.spawns){g.moveTo(X(sx),Y(DW-0.6));g.lineTo(X(sx),S0)}g.stroke();g.setLineDash([]);g.globalAlpha=1}
+  // obstacles
+  for(const o of D_.lvl.obst||[]){if(o.type==='peg'){g.fillStyle=col.ink;g.beginPath();g.arc(X(o.x),Y(o.y),PEG*U,0,7);g.fill();g.strokeStyle=col.bg;g.lineWidth=2;g.beginPath();g.arc(X(o.x),Y(o.y),PEG*U*0.45,0,7);g.stroke()}
+    else{g.strokeStyle=col.ink;g.lineCap='round';g.lineWidth=BARW*2*U;g.beginPath();g.moveTo(X(o.x1),Y(o.y1));g.lineTo(X(o.x2),Y(o.y2));g.stroke()}}
   // curves
   g.lineCap='round';g.lineJoin='round';g.lineWidth=Math.max(3,S0/130);
   for(const l of D_.lines){g.strokeStyle=cssv('--cv'+(l.ci+1));g.beginPath();l.pts.forEach(([x,y],i)=>i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)));g.stroke()}
-  // coins
-  const cr=CR*U;for(const c of D_.lvl.coins){let sc=1,al=1;if(c.got){const k=Math.min(1,(D_.t-c.gt)/0.35);sc=1+k*0.8;al=1-k;if(al<=0)continue}
-    g.globalAlpha=al;g.fillStyle=col.coin;g.strokeStyle=col.edge;g.lineWidth=2;g.beginPath();g.arc(X(c.x),Y(c.y),cr*sc,0,7);g.fill();g.stroke();
-    g.beginPath();g.arc(X(c.x),Y(c.y),cr*sc*0.55,0,7);g.lineWidth=1.3;g.stroke();g.globalAlpha=1}
-  // spawn markers
+  // coins (moving ones show their track)
+  const cr=CR*U,tc=D_.state==='edit'?0:D_.t;
+  for(const c of D_.lvl.coins){if(c.mv&&!c.got){const a=c.mv.a;g.save();g.setLineDash([3,4]);g.strokeStyle=col.edge;g.globalAlpha=.7;g.lineWidth=2;g.beginPath();
+      if(c.mv.ax==='x'){g.moveTo(X(c.x-a),Y(c.y));g.lineTo(X(c.x+a),Y(c.y))}else{g.moveTo(X(c.x),Y(c.y-a));g.lineTo(X(c.x),Y(c.y+a))}g.stroke();g.restore()}
+    const [px,py]=c.got&&c.gp?c.gp:coinPos(c,tc);let sc=1,al=1;if(c.got){if(!c.gp)c.gp=[px,py];const k=Math.min(1,(D_.t-c.gt)/0.35);sc=1+k*0.8;al=1-k;if(al<=0)continue}
+    g.globalAlpha=al;g.fillStyle=col.coin;g.strokeStyle=col.edge;g.lineWidth=2;g.beginPath();g.arc(X(px),Y(py),cr*sc,0,7);g.fill();g.stroke();
+    g.beginPath();g.arc(X(px),Y(py),cr*sc*0.55,0,7);g.lineWidth=1.3;g.stroke();g.globalAlpha=1}
+  // spawn marker
   g.fillStyle=col.ink;for(const sx of D_.lvl.spawns){g.beginPath();g.moveTo(X(sx)-7,2);g.lineTo(X(sx)+7,2);g.lineTo(X(sx),11);g.closePath();g.fill()}
-  g.font=`700 ${Math.max(10,S0/40)}px ${cssv('--f-mono')||'monospace'}`;g.textAlign='left';g.textBaseline='top';for(const sx of D_.lvl.spawns){const lb='x = '+num(sx);const tw=g.measureText(lb).width;g.fillText(lb,X(sx)+tw+16>S0?X(sx)-tw-12:X(sx)+10,3)}
+  g.font=`700 ${Math.max(10,S0/40)}px ${mono}`;g.textAlign='left';g.textBaseline='top';for(const sx of D_.lvl.spawns){const lb='x = '+num(sx);const tw=g.measureText(lb).width;g.fillText(lb,X(sx)+tw+16>S0?X(sx)-tw-12:X(sx)+10,3)}
   // balls
   const br=BR*U;const balls=D_.balls.length?D_.balls:D_.lvl.spawns.map(sx=>({x:sx,y:DW-0.6,trail:[],on:true}));
   for(const b of balls){if(b.out)continue;
@@ -985,7 +1470,7 @@ function draw(){if(!dctx||!D_.lvl||$('v-drop').hidden)return;const g=dctx,S0=dS,
   // crosshair
   if(D_.hover&&D_.state!=='run'){const [hx,hy]=D_.hover;g.strokeStyle=col.ink;g.globalAlpha=.5;g.setLineDash([3,4]);g.lineWidth=1;g.beginPath();
     g.moveTo(X(hx),0);g.lineTo(X(hx),S0);g.moveTo(0,Y(hy));g.lineTo(S0,Y(hy));g.stroke();g.setLineDash([]);g.globalAlpha=1;
-    const lbl=`(${num(hx)} | ${num(hy)})`;g.font=`700 ${Math.max(11,S0/36)}px ${cssv('--f-mono')||'monospace'}`;const tw=g.measureText(lbl).width;
+    const lbl=`(${num(hx)} | ${num(hy)})`;g.font=`700 ${Math.max(11,S0/36)}px ${mono}`;const tw=g.measureText(lbl).width;
     let lx=X(hx)+10,ly=Y(hy)-22;if(lx+tw+10>S0)lx=X(hx)-tw-20;if(ly<4)ly=Y(hy)+10;
     g.fillStyle=col.bg;g.strokeStyle=col.line;g.lineWidth=1;g.beginPath();g.rect(lx,ly,tw+10,20);g.fill();g.stroke();g.fillStyle=col.ink;g.textAlign='left';g.textBaseline='middle';g.fillText(lbl,lx+5,ly+10)}}
 function canvasPt(e){const c=$('d-canvas'),r=c.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*2*DW-DW,y=DW-(e.clientY-r.top)/r.height*2*DW;
@@ -997,7 +1482,7 @@ function canvasPt(e){const c=$('d-canvas'),r=c.getBoundingClientRect();const x=(
   if(window.ResizeObserver)new ResizeObserver(()=>sizeCanvas()).observe(c);else window.addEventListener('resize',sizeCanvas);
   if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>draw());
   $('d-fns').addEventListener('input',e=>{const el=e.target,row=el.closest('.fn');if(!row||!el.dataset.f)return;D_.fns[+row.dataset.i][el.dataset.f]=el.value;
-    if(D_.state==='done'){D_.state='edit';D_.res=null;$('d-res').hidden=true;D_.balls=[];D_.lvl.coins.forEach(c=>c.got=false);updateBar()}rebuild()});
+    if(D_.state==='done'){D_.state='edit';D_.res=null;D_.t=0;$('d-res').hidden=true;D_.balls=[];D_.lvl.coins.forEach(c=>{c.got=false;c.gp=null});updateBar()}rebuild()});
 })();
 function dropClick(id,b){
   if(b.dataset.fdel!=null){const i=+b.dataset.fdel;D_.fns.splice(i,1);if(!D_.fns.length)D_.fns.push({src:'',a:'',b:''});renderFns();rebuild();return true}
@@ -1006,11 +1491,11 @@ function dropClick(id,b){
     case 'd-back':case 'd-home':resetRun();renderMenu();show('menu');return true;
     case 'd-start':startRun();return true;
     case 'd-reset':resetRun();return true;
-    case 'd-new':case 'd-next':newLevel();updateBar();return true;
+    case 'd-new':case 'd-next':newLevel();return true;
+    case 'd-daily':if(!dailyLevel())newLevel();return true;
     case 'd-retry':resetRun();return true;
     case 'd-add':if(D_.fns.length<MAXF){D_.fns.push({src:'',a:'',b:''});renderFns();rebuild();const n=$('fe'+(D_.fns.length-1));n&&n.focus()}else{$('d-warn').textContent=T().maxFns;$('d-warn').hidden=false}return true}
   return false}
-
 
 /* ---------- install & backup ---------- */
 let installEvt=null;
@@ -1038,22 +1523,27 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
   if(b.dataset.lang){P.lang=b.dataset.lang;persist();applyI18n();return}
   if(b.dataset.tab){goTab(b.dataset.tab);return}
   if(b.dataset.slv){P.statsLv=b.dataset.slv;persist();renderStats();return}
-  if(b.dataset.dur){P.dur=+b.dataset.dur;persist();renderSettings();renderMenu();return}
+  if(b.dataset.metric){P.trMetric=b.dataset.metric;persist();renderStats();return}
+  if(b.dataset.gm){P.gm=b.dataset.gm;persist();renderSettings();renderMenu();return}
+  if(b.dataset.dur){if(b.dataset.dur==='custom')P.durCustom=true;else{P.durCustom=false;P.dur=+b.dataset.dur}persist();renderSettings();renderMenu();if(P.durCustom)$('dur-custom').focus();return}
   if(b.dataset.diff){P.diff=b.dataset.diff;persist();renderSettings();renderMenu();return}
+  if(b.dataset.thm){P.theme=b.dataset.thm;persist();applyTheme();renderSettings();return}
+  if(b.dataset.pal){P.pal=b.dataset.pal;persist();applyTheme();renderSettings();return}
   if(b.dataset.disc){start(b.dataset.disc,[b.dataset.disc]);return}
   if(b.dataset.group){const ks=GROUPS.find(g=>g[0]===b.dataset.group)[1];const allOn=ks.every(k=>P.mix.includes(k));
     P.mix=DISC.filter(k=>ks.includes(k)?!allOn:P.mix.includes(k));persist();renderMenu();$('mix-warn').hidden=!!P.mix.length;return}
   if(b.dataset.chip){const k=b.dataset.chip;P.mix=P.mix.includes(k)?P.mix.filter(x=>x!==k):DISC.filter(x=>x===k||P.mix.includes(x));persist();renderMenu();$('mix-warn').hidden=!!P.mix.length;return}
   if(b.dataset.opt!=null){choose(+b.dataset.opt);return}
   switch(b.id){
-    case 'home':case 'stats-back':case 'to-menu':stop();renderMenu();show('menu');break;
-    case 'btn-stats':case 'to-stats':stop();renderStats();show('stats');break;
+    case 'home':case 'to-menu':stop();renderMenu();show('menu');break;
+    case 'to-stats':stop();renderStats();show('stats');break;
     case 'mix-start':if(!P.mix.length){$('mix-warn').hidden=false;break}start('mix',P.mix);break;
     case 'mix-all':P.mix=DISC.slice();persist();renderMenu();$('mix-warn').hidden=true;break;
+    case 'weak-start':start('weak',weakDiscs());break;
     case 'quit':leaveGame();break;
     case 'check':submit(false);break;
     case 'skip':if(G_.q&&G_.q.kind==='choice'&&!G_.locked){document.querySelectorAll('.opt')[G_.q.ans].classList.add('right')}submit(true);break;
-    case 'again':start(last.mode,last.discs);break;
+    case 'again':start(last.mode,last.mode==='weak'?weakDiscs():last.discs);break;
     case 'btn-export':exportStats();break;
     case 'btn-import':$('file-import').click();break;
     case 'btn-install':if(installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;$('btn-install').hidden=true})}break;
@@ -1061,6 +1551,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
     case 'reset-no':$('reset').hidden=false;$('reset-confirm').hidden=true;break;
     case 'reset-yes':S=fresh();ensureS();persist();renderStats();renderMenu();break;
   }});
+$('dur-custom').addEventListener('input',e=>{const v=Math.round(+e.target.value);if(v>=10&&v<=600){P.dur=v;P.durCustom=true;persist();renderMenu()}});
+$('dur-custom').addEventListener('change',e=>{const v=Math.round(+e.target.value);if(!(v>=10&&v<=600))e.target.value=P.dur});
+$('tr-disc').addEventListener('change',e=>{P.trDisc=e.target.value;persist();renderStats()});
 document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('in'))activeIn=e.target});
 document.addEventListener('keydown',e=>{if($('v-game').hidden)return;
   if(e.key==='Escape'){leaveGame();return}
@@ -1078,10 +1571,9 @@ kp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!G_.q|
   else if(k==='dec'){if(!/[.,]/.test(el.value))el.value+=(P.lang==='de'?',':'.')}
   else if(k==='next'){const i=ins.indexOf(el);activeIn=ins[(i+1)%ins.length];activeIn.focus({preventScroll:true})}
   else if(k==='go'){const empty=ins.find(i=>!i.value.trim()&&!i.classList.contains('opt'));if(empty&&empty!==el){activeIn=empty;empty.focus({preventScroll:true});return}submit(false)}});
-document.addEventListener('visibilitychange',()=>{});
 
-applyI18n();initInstall();show('menu');
-window.__blitz={G,parse,parseC,num,poly,vform,P,compileFn,D_,rebuild,renderFns,genLevel,get q(){return G_.q}};
+applyTheme();applyI18n();initInstall();show('menu');
+window.__blitz={G,genQ,classify,seeded,parse,parseC,num,P,get S(){return S},compileFn,D_,rebuild,renderFns,genLevel,dailyLevel,fitsRule,weakPick,get q(){return G_.q},G_};
 })();
 </script>
 <script>

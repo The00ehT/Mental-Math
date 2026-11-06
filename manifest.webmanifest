@@ -1,7 +1,7 @@
 {
   "name": "Blitzrechnen",
   "short_name": "Blitzrechnen",
-  "description": "Mental math against the clock: arithmetic, functions, calculus and linear algebra, plus the Coin Drop puzzle.",
+  "description": "Mental math against the clock: 27 disciplines from arithmetic to linear algebra, game modes, progress statistics and the Coin Drop puzzle.",
   "lang": "en",
   "start_url": "./",
   "scope": "./",
